@@ -1,10 +1,12 @@
 package Entidades;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.Set;
 
 /**
  *
@@ -14,7 +16,40 @@ import javax.persistence.Id;
 public class Carrera implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id; 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idCarrera;
+    
+    private String nombreCarrera;
+
+    @OneToMany(mappedBy = "carrera")
+    private Set<Estudiante> estudiantes;
+
+    public Carrera() {
+    }
+
+    public Long getIdCarrera() {
+        return idCarrera;
+    }
+
+    public void setIdCarrera(Long idCarrera) {
+        this.idCarrera = idCarrera;
+    }
+
+    public String getNombreCarrera() {
+        return nombreCarrera;
+    }
+
+    public void setNombreCarrera(String nombreCarrera) {
+        this.nombreCarrera = nombreCarrera;
+    }
+
+    public Set<Estudiante> getEstudiantes() {
+        return estudiantes;
+    }
+
+    public void setEstudiantes(Set<Estudiante> estudiantes) {
+        this.estudiantes = estudiantes;
+    }
 }
