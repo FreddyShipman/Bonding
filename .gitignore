@@ -1,1 +1,14 @@
-.idea
+# IDEs
+.idea/
+*.iml
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+
+# Maven
+target/
+
+# Logs
+*.log
