@@ -1,13 +1,15 @@
 package Entidades;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 /**
- *
  * @author Fred
  */
 @Entity
@@ -16,5 +18,65 @@ public class Mensaje implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long idMensaje;
+
+    private String contenido;
+
+    private LocalDateTime fechaEnvio;
+
+    private Long idEstudianteEmisor;
+
+    @ManyToOne
+    @JoinColumn(name = "idChat")
+    private Chat chat;
+
+    public Mensaje() {
+    }
+
+    public Mensaje(Long idMensaje, String contenido, LocalDateTime fechaEnvio, Long idEstudianteEmisor) {
+        this.idMensaje = idMensaje;
+        this.contenido = contenido;
+        this.fechaEnvio = fechaEnvio;
+        this.idEstudianteEmisor = idEstudianteEmisor;
+    }
+
+    public Long getIdMensaje() {
+        return idMensaje;
+    }
+
+    public void setIdMensaje(Long idMensaje) {
+        this.idMensaje = idMensaje;
+    }
+
+    public String getContenido() {
+        return contenido;
+    }
+
+    public void setContenido(String contenido) {
+        this.contenido = contenido;
+    }
+
+    public LocalDateTime getFechaEnvio() {
+        return fechaEnvio;
+    }
+
+    public void setFechaEnvio(LocalDateTime fechaEnvio) {
+        this.fechaEnvio = fechaEnvio;
+    }
+
+    public Long getIdEstudianteEmisor() {
+        return idEstudianteEmisor;
+    }
+
+    public void setIdEstudianteEmisor(Long idEstudianteEmisor) {
+        this.idEstudianteEmisor = idEstudianteEmisor;
+    }
+
+    public Chat getChat() {
+        return chat;
+    }
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
+    }
 }
