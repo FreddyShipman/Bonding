@@ -5,6 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
 /**
  * @author Fred
@@ -18,25 +21,29 @@ public class Preferencia implements Serializable {
     private Long idPreferencia;
 
     private String generoPreferido;
-
-    private Long idCarreraPreferida;
-
     private Integer edadMinima;
-
     private Integer edadMaxima;
 
-    private Long idEstudiante;
+    // Relacion: Uno a Uno con Estudiante
+    @OneToOne
+    @JoinColumn(name = "id_estudiante")
+    private Estudiante estudiante;
 
+    // Relacion: Muchos a Uno con Carrera
+    @ManyToOne
+    @JoinColumn(name = "id_carrera_preferida")
+    private Carrera carreraPreferida;
+    
     public Preferencia() {
     }
 
-    public Preferencia(Long idPreferencia, String generoPreferido, Long idCarreraPreferida, Integer edadMinima, Integer edadMaxima, Long idEstudiante) {
+    public Preferencia(Long idPreferencia, String generoPreferido, Integer edadMinima, Integer edadMaxima, Estudiante estudiante, Carrera carreraPreferida) {
         this.idPreferencia = idPreferencia;
         this.generoPreferido = generoPreferido;
-        this.idCarreraPreferida = idCarreraPreferida;
         this.edadMinima = edadMinima;
         this.edadMaxima = edadMaxima;
-        this.idEstudiante = idEstudiante;
+        this.estudiante = estudiante;
+        this.carreraPreferida = carreraPreferida;
     }
 
     public Long getIdPreferencia() {
@@ -55,14 +62,6 @@ public class Preferencia implements Serializable {
         this.generoPreferido = generoPreferido;
     }
 
-    public Long getIdCarreraPreferida() {
-        return idCarreraPreferida;
-    }
-
-    public void setIdCarreraPreferida(Long idCarreraPreferida) {
-        this.idCarreraPreferida = idCarreraPreferida;
-    }
-
     public Integer getEdadMinima() {
         return edadMinima;
     }
@@ -79,11 +78,19 @@ public class Preferencia implements Serializable {
         this.edadMaxima = edadMaxima;
     }
 
-    public Long getIdEstudiante() {
-        return idEstudiante;
+    public Estudiante getEstudiante() {
+        return estudiante;
     }
 
-    public void setIdEstudiante(Long idEstudiante) {
-        this.idEstudiante = idEstudiante;
+    public void setEstudiante(Estudiante estudiante) {
+        this.estudiante = estudiante;
+    }
+
+    public Carrera getCarreraPreferida() {
+        return carreraPreferida;
+    }
+
+    public void setCarreraPreferida(Carrera carreraPreferida) {
+        this.carreraPreferida = carreraPreferida;
     }
 }

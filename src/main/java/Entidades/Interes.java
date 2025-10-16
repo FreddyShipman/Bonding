@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import java.util.Set;
 
 /**
  * @author Fred
@@ -18,8 +20,10 @@ public class Interes implements Serializable {
     private Long idInteres;
 
     private String categoria;
-
     private String nombreInteres;
+
+    @ManyToMany(mappedBy = "intereses")
+    private Set<Estudiante> estudiantes;
 
     public Interes() {
     }
@@ -30,6 +34,7 @@ public class Interes implements Serializable {
         this.nombreInteres = nombreInteres;
     }
 
+    // Getters y Setters existentes...
     public Long getIdInteres() {
         return idInteres;
     }
@@ -52,5 +57,13 @@ public class Interes implements Serializable {
 
     public void setNombreInteres(String nombreInteres) {
         this.nombreInteres = nombreInteres;
+    }
+    
+    public Set<Estudiante> getEstudiantes() {
+        return estudiantes;
+    }
+
+    public void setEstudiantes(Set<Estudiante> estudiantes) {
+        this.estudiantes = estudiantes;
     }
 }

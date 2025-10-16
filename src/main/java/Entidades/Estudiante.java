@@ -1,5 +1,6 @@
 package Entidades;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,6 +10,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -62,11 +64,28 @@ public class Estudiante implements Serializable {
     // Relacion: Uno a Muchos para Likes RECIBIDOS
     @OneToMany(mappedBy = "estudianteReceptor")
     private Set<Like> likesRecibidos;
+    
+    // Relacion: Muchos a Muchos con Match
+    @ManyToMany(mappedBy = "estudiantes")
+    private Set<Match> matches;
+    
+    // Relacion: Muchos a Muchos con Interes
+    @ManyToMany
+    @JoinTable(
+        name = "estudiante_interes",
+        joinColumns = @JoinColumn(name = "id_estudiante"),
+        inverseJoinColumns = @JoinColumn(name = "id_interes")
+    )
+    private Set<Interes> intereses;
+    
+    // Relacion: Uno a uno con Preferencia
+    @OneToOne(mappedBy = "estudiante", cascade = CascadeType.ALL)
+    private Preferencia preferencia;
 
     public Estudiante() {
     }
 
-    public Estudiante(Long idEstudiante, String nombreEstudiante, String apellidoPaterno, String apellidoMaterno, String correoInstitucional, String contrasena, String fotoPerfil, Carrera carrera, Set<Hobby> hobbies, Set<Interaccion> interacciones, Set<Like> likesDados, Set<Like> likesRecibidos) {
+    public Estudiante(Long idEstudiante, String nombreEstudiante, String apellidoPaterno, String apellidoMaterno, String correoInstitucional, String contrasena, String fotoPerfil, Carrera carrera, Set<Hobby> hobbies, Set<Interaccion> interacciones, Set<Like> likesDados, Set<Like> likesRecibidos, Set<Match> matches, Set<Interes> intereses, Preferencia preferencia) {
         this.idEstudiante = idEstudiante;
         this.nombreEstudiante = nombreEstudiante;
         this.apellidoPaterno = apellidoPaterno;
@@ -79,8 +98,11 @@ public class Estudiante implements Serializable {
         this.interacciones = interacciones;
         this.likesDados = likesDados;
         this.likesRecibidos = likesRecibidos;
+        this.matches = matches;
+        this.intereses = intereses;
+        this.preferencia = preferencia;
     }
-
+    
     public Long getIdEstudiante() {
         return idEstudiante;
     }
@@ -177,5 +199,27 @@ public class Estudiante implements Serializable {
         this.likesRecibidos = likesRecibidos;
     }
     
+    public Set<Match> getMatches() {
+        return matches;
+    }
+
+    public void setMatches(Set<Match> matches) {
+        this.matches = matches;
+    }
     
+    public Set<Interes> getIntereses() {
+        return intereses;
+    }
+
+    public void setIntereses(Set<Interes> intereses) {
+        this.intereses = intereses;
+    }
+    
+    public Preferencia getPreferencia() {
+        return preferencia;
+    }
+
+    public void setPreferencia(Preferencia preferencia) {
+        this.preferencia = preferencia;
+    }
 }

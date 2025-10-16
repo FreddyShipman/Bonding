@@ -7,12 +7,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import java.util.Set;
 
 /**
  * @author Fred
  */
 @Entity
+@Table(name = "Matches")
 public class Match implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -22,21 +28,24 @@ public class Match implements Serializable {
 
     private LocalDateTime fechaMatch;
 
-    private Long idEstudiante1;
-
-    private Long idEstudiante2;
+    @ManyToMany
+    @JoinTable(
+        name = "match_estudiante",
+        joinColumns = @JoinColumn(name = "id_match"),
+        inverseJoinColumns = @JoinColumn(name = "id_estudiante")
+    )
+    private Set<Estudiante> estudiantes;
 
     @OneToOne(mappedBy = "match", cascade = CascadeType.ALL)
     private Chat chat;
 
     public Match() {
     }
-
-    public Match(Long idMatch, LocalDateTime fechaMatch, Long idEstudiante1, Long idEstudiante2) {
+    
+    public Match(Long idMatch, LocalDateTime fechaMatch, Set<Estudiante> estudiantes) {
         this.idMatch = idMatch;
         this.fechaMatch = fechaMatch;
-        this.idEstudiante1 = idEstudiante1;
-        this.idEstudiante2 = idEstudiante2;
+        this.estudiantes = estudiantes;
     }
 
     public Long getIdMatch() {
@@ -55,20 +64,12 @@ public class Match implements Serializable {
         this.fechaMatch = fechaMatch;
     }
 
-    public Long getIdEstudiante1() {
-        return idEstudiante1;
+    public Set<Estudiante> getEstudiantes() {
+        return estudiantes;
     }
 
-    public void setIdEstudiante1(Long idEstudiante1) {
-        this.idEstudiante1 = idEstudiante1;
-    }
-
-    public Long getIdEstudiante2() {
-        return idEstudiante2;
-    }
-
-    public void setIdEstudiante2(Long idEstudiante2) {
-        this.idEstudiante2 = idEstudiante2;
+    public void setEstudiantes(Set<Estudiante> estudiantes) {
+        this.estudiantes = estudiantes;
     }
 
     public Chat getChat() {
