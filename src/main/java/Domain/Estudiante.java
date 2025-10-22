@@ -1,4 +1,4 @@
-package Entidades;
+package Domain;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

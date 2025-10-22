@@ -1,4 +1,4 @@
-package Entidades;
+package Domain;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
