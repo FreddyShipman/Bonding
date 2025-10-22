@@ -16,7 +16,7 @@ import java.util.Set;
 
 /**
  *
- * @author Fred
+ * @author JOSE ALFREDO GUZMAN MORENO - 252524
  */
 @Entity
 public class Estudiante implements Serializable {

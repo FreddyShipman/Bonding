@@ -6,7 +6,7 @@ import jakarta.persistence.Persistence;
 
 /**
  *
- * @author alfre
+ * @author JOSE ALFREDO GUZMAN MORENO - 252524
  */
 public class Bonding {
 
@@ -17,7 +17,7 @@ public class Bonding {
         try (EntityManagerFactory emf = Persistence.createEntityManagerFactory("BondingPU");
              EntityManager em = emf.createEntityManager()) {
 
-            System.out.println("Conexión exitosa - Tablas creadas/actualizadas");
+            System.out.println("ConexiOn exitosa - Tablas creadas/actualizadas");
 
         } catch (Exception e) {
             System.err.println("Error al conectar con la base de datos: " + e.getMessage());

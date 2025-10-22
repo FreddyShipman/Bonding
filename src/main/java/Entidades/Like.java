@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 /**
  *
- * @author alfre
+ * @author JOSE ALFREDO GUZMAN MORENO - 252524
  */
 @Entity
 @Table(name = "MeGusta")
