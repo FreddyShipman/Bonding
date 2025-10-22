@@ -2,24 +2,22 @@
 <persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
   <persistence-unit name="BondingPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-    <class>Entidades.Estudiante</class>
-    <class>Entidades.Hobby</class>
-    <class>Entidades.Interaccion</class>
-    <class>Entidades.Carrera</class>
-    <class>Entidades.Match</class>
-    <class>Entidades.Chat</class>
-    <class>Entidades.Mensaje</class>
-    <class>Entidades.Preferencia</class>
-    <class>Entidades.Interes</class>
-    <class>Entidades.Like</class>
+    <class>Domain.Hobby</class>
+    <class>Domain.Carrera</class>
+    <class>Domain.Preferencia</class>
+    <class>Domain.Interes</class>
+    <class>Domain.Interaccion</class>
+    <class>Domain.Estudiante</class>
+    <class>Domain.Chat</class>
+    <class>Domain.Like</class>
+    <class>Domain.Mensaje</class>
+    <class>Domain.Match</class>
     <properties>
       <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/Bonding?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
       <property name="jakarta.persistence.jdbc.user" value="root"/>
       <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-      <property name="jakarta.persistence.jdbc.password" value=""/>
-
+      <property name="jakarta.persistence.jdbc.password" value="password"/>
       <property name="hibernate.hbm2ddl.auto" value="update"/>
-
       <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
     </properties>
   </persistence-unit>
