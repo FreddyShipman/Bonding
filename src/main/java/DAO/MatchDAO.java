@@ -1,11 +1,11 @@
 package DAO;
 
-import Config.JpaUtil;
 import Domain.Chat;
 import Domain.Estudiante;
 import Domain.Match;
 import InterfaceDAO.IMatchDAO;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,269 +16,143 @@ import java.util.List;
  *
  * @author Bonding Team
  */
-public class MatchDAO implements IMatchDAO {
 
-    @Override
-    public Match crear(Match entidad) throws Exception {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.persist(entidad);
-            em.getTransaction().commit();
-            return entidad;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new Exception("Error al crear el match: " + e.getMessage(), e);
-        } finally {
-            em.close();
-        }
+public class MatchDAO extends GenericDAO<Match, Long> implements IMatchDAO {
+
+    public MatchDAO() {
+        super(Match.class);
     }
 
     @Override
-    public Match buscarPorId(Long id) throws Exception {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
-        try {
-            Match match = em.find(Match.class, id);
-            if (match == null) {
-                throw new Exception("Match con ID " + id + " no encontrado");
-            }
-            return match;
-        } finally {
-            em.close();
-        }
-    }
-
-    @Override
-    public List<Match> listar(int limit) throws Exception {
-        if (limit > 100) {
-            throw new IllegalArgumentException("El límite no puede exceder 100");
-        }
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
-        try {
-            TypedQuery<Match> query = em.createQuery("SELECT m FROM Match m", Match.class);
-            query.setMaxResults(limit);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
-    @Override
-    public Match actualizar(Match entidad) throws Exception {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
-        try {
-            em.getTransaction().begin();
-            Match matchActualizado = em.merge(entidad);
-            em.getTransaction().commit();
-            return matchActualizado;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new Exception("Error al actualizar el match: " + e.getMessage(), e);
-        } finally {
-            em.close();
-        }
-    }
-
-    @Override
-    public boolean eliminar(Long id) throws Exception {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
-        try {
-            em.getTransaction().begin();
-            Match match = em.find(Match.class, id);
-            if (match != null) {
-                em.remove(match);
-                em.getTransaction().commit();
-                return true;
-            }
-            em.getTransaction().rollback();
-            return false;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new Exception("Error al eliminar el match: " + e.getMessage(), e);
-        } finally {
-            em.close();
-        }
-    }
-
-    @Override
-    public List<Match> obtenerMatchesPorEstudiante(Long idEstudiante, int limit) throws Exception {
-        if (limit > 100) {
-            throw new IllegalArgumentException("El límite no puede exceder 100");
-        }
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
+    public List<Match> obtenerMatchesPorEstudiante(EntityManager em, Long idEstudiante, int limit) throws Exception {
         try {
             TypedQuery<Match> query = em.createQuery(
-                "SELECT m FROM Match m JOIN m.estudiantes e WHERE e.idEstudiante = :idEstudiante",
-                Match.class
-            );
-            query.setParameter("idEstudiante", idEstudiante);
-            query.setMaxResults(limit);
+                "SELECT m FROM Match m JOIN m.estudiantes e WHERE e.idEstudiante = :idEst", Match.class);
+            query.setParameter("idEst", idEstudiante);
+            query.setMaxResults(Math.min(limit, 100));
             return query.getResultList();
-        } finally {
-            em.close();
+        } catch (Exception e) {
+            throw new Exception("Error al obtener matches por estudiante: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<Match> buscarPorFecha(LocalDateTime fecha, int limit) throws Exception {
-        if (limit > 100) {
-            throw new IllegalArgumentException("El límite no puede exceder 100");
-        }
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
+    public List<Match> buscarPorFecha(EntityManager em, LocalDateTime fecha, int limit) throws Exception {
         try {
             TypedQuery<Match> query = em.createQuery(
-                "SELECT m FROM Match m WHERE FUNCTION('DATE', m.fechaMatch) = FUNCTION('DATE', :fecha)",
-                Match.class
-            );
+                "SELECT m FROM Match m WHERE m.fechaMatch = :fecha", Match.class);
             query.setParameter("fecha", fecha);
-            query.setMaxResults(limit);
+            query.setMaxResults(Math.min(limit, 100));
             return query.getResultList();
-        } finally {
-            em.close();
+        } catch (Exception e) {
+            throw new Exception("Error al buscar match por fecha: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<Match> buscarPorRangoFechas(LocalDateTime inicio, LocalDateTime fin, int limit) throws Exception {
-        if (limit > 100) {
-            throw new IllegalArgumentException("El límite no puede exceder 100");
-        }
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
+    public List<Match> buscarPorRangoFechas(EntityManager em, LocalDateTime fechaInicio, LocalDateTime fechaFin, int limit) throws Exception {
         try {
             TypedQuery<Match> query = em.createQuery(
-                "SELECT m FROM Match m WHERE m.fechaMatch BETWEEN :inicio AND :fin",
-                Match.class
-            );
-            query.setParameter("inicio", inicio);
-            query.setParameter("fin", fin);
-            query.setMaxResults(limit);
+                "SELECT m FROM Match m WHERE m.fechaMatch BETWEEN :inicio AND :fin", Match.class);
+            query.setParameter("inicio", fechaInicio);
+            query.setParameter("fin", fechaFin);
+            query.setMaxResults(Math.min(limit, 100));
             return query.getResultList();
-        } finally {
-            em.close();
+        } catch (Exception e) {
+            throw new Exception("Error al buscar match por rango fechas: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public Match verificarMatchExistente(Long idEstudiante1, Long idEstudiante2) throws Exception {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
+    public Match verificarMatchExistente(EntityManager em, Long idEstudiante1, Long idEstudiante2) throws Exception {
         try {
             TypedQuery<Match> query = em.createQuery(
                 "SELECT m FROM Match m JOIN m.estudiantes e1 JOIN m.estudiantes e2 " +
-                "WHERE e1.idEstudiante = :id1 AND e2.idEstudiante = :id2",
-                Match.class
-            );
-            query.setParameter("id1", idEstudiante1);
-            query.setParameter("id2", idEstudiante2);
-            List<Match> resultado = query.getResultList();
-            return resultado.isEmpty() ? null : resultado.get(0);
-        } finally {
-            em.close();
+                "WHERE e1.idEstudiante = :idEst1 AND e2.idEstudiante = :idEst2", Match.class);
+            query.setParameter("idEst1", idEstudiante1);
+            query.setParameter("idEst2", idEstudiante2);
+            query.setMaxResults(1);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } catch (Exception e) {
+            throw new Exception("Error al verificar match existente: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public Long contarMatchesPorEstudiante(Long idEstudiante) throws Exception {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
+    public Long contarMatchesPorEstudiante(EntityManager em, Long idEstudiante) throws Exception {
         try {
             TypedQuery<Long> query = em.createQuery(
-                "SELECT COUNT(m) FROM Match m JOIN m.estudiantes e WHERE e.idEstudiante = :idEstudiante",
-                Long.class
-            );
-            query.setParameter("idEstudiante", idEstudiante);
+                "SELECT COUNT(m) FROM Match m JOIN m.estudiantes e WHERE e.idEstudiante = :idEst", Long.class);
+            query.setParameter("idEst", idEstudiante);
             return query.getSingleResult();
-        } finally {
-            em.close();
+        } catch (Exception e) {
+            throw new Exception("Error al contar matches por estudiante: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public Chat obtenerChatDelMatch(Long idMatch) throws Exception {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
+    public Chat obtenerChatDelMatch(EntityManager em, Long idMatch) throws Exception {
         try {
             TypedQuery<Chat> query = em.createQuery(
-                "SELECT c FROM Chat c WHERE c.match.idMatch = :idMatch",
-                Chat.class
-            );
+                "SELECT m.chat FROM Match m WHERE m.idMatch = :idMatch", Chat.class);
             query.setParameter("idMatch", idMatch);
-            List<Chat> resultado = query.getResultList();
-            return resultado.isEmpty() ? null : resultado.get(0);
-        } finally {
-            em.close();
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } catch (Exception e) {
+            throw new Exception("Error al obtener chat del match: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<Estudiante> obtenerEstudiantesDelMatch(Long idMatch) throws Exception {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
+    public List<Estudiante> obtenerEstudiantesDelMatch(EntityManager em, Long idMatch) throws Exception {
         try {
             TypedQuery<Estudiante> query = em.createQuery(
-                "SELECT e FROM Match m JOIN m.estudiantes e WHERE m.idMatch = :idMatch",
-                Estudiante.class
-            );
+                "SELECT e FROM Match m JOIN m.estudiantes e WHERE m.idMatch = :idMatch", Estudiante.class);
             query.setParameter("idMatch", idMatch);
             return query.getResultList();
-        } finally {
-            em.close();
+        } catch (Exception e) {
+            throw new Exception("Error al obtener estudiantes del match: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<Match> obtenerMatchesRecientes(int limit) throws Exception {
-        if (limit > 100) {
-            throw new IllegalArgumentException("El límite no puede exceder 100");
-        }
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
+    public List<Match> obtenerMatchesRecientes(EntityManager em, int limit) throws Exception {
         try {
             TypedQuery<Match> query = em.createQuery(
-                "SELECT m FROM Match m ORDER BY m.fechaMatch DESC",
-                Match.class
-            );
-            query.setMaxResults(limit);
+                "SELECT m FROM Match m ORDER BY m.fechaMatch DESC", Match.class);
+            query.setMaxResults(Math.min(limit, 100));
             return query.getResultList();
-        } finally {
-            em.close();
+        } catch (Exception e) {
+            throw new Exception("Error al obtener matches recientes: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<Match> obtenerMatchesConChat(Long idEstudiante, int limit) throws Exception {
-        if (limit > 100) {
-            throw new IllegalArgumentException("El límite no puede exceder 100");
-        }
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
+    public List<Match> obtenerMatchesConChat(EntityManager em, Long idEstudiante, int limit) throws Exception {
         try {
             TypedQuery<Match> query = em.createQuery(
-                "SELECT m FROM Match m JOIN m.estudiantes e WHERE e.idEstudiante = :idEstudiante " +
-                "AND m.chat IS NOT NULL",
-                Match.class
-            );
-            query.setParameter("idEstudiante", idEstudiante);
-            query.setMaxResults(limit);
+                "SELECT m FROM Match m JOIN m.estudiantes e WHERE e.idEstudiante = :idEst AND m.chat IS NOT NULL", Match.class);
+            query.setParameter("idEst", idEstudiante);
+            query.setMaxResults(Math.min(limit, 100));
             return query.getResultList();
-        } finally {
-            em.close();
+        } catch (Exception e) {
+            throw new Exception("Error al obtener matches con chat: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public Long contarMatchesPorPeriodo(LocalDateTime inicio, LocalDateTime fin) throws Exception {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
+    public Long contarMatchesPorPeriodo(EntityManager em, LocalDateTime fechaInicio, LocalDateTime fechaFin) throws Exception {
         try {
             TypedQuery<Long> query = em.createQuery(
-                "SELECT COUNT(m) FROM Match m WHERE m.fechaMatch BETWEEN :inicio AND :fin",
-                Long.class
-            );
-            query.setParameter("inicio", inicio);
-            query.setParameter("fin", fin);
+                "SELECT COUNT(m) FROM Match m WHERE m.fechaMatch BETWEEN :inicio AND :fin", Long.class);
+            query.setParameter("inicio", fechaInicio);
+            query.setParameter("fin", fechaFin);
             return query.getSingleResult();
-        } finally {
-            em.close();
+        } catch (Exception e) {
+            throw new Exception("Error al contar matches por periodo: " + e.getMessage(), e);
         }
     }
 }

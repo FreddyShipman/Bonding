@@ -2,6 +2,7 @@ package InterfaceDAO;
 
 import Domain.Mensaje;
 import Domain.Chat;
+import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,122 +12,135 @@ import java.util.List;
  *
  * @author Alex Adrian Nieblas Moreno - 252865
  */
+
 public interface IMensajeDAO extends IGenericDAO<Mensaje, Long> {
 
     /**
-     * Obtiene todos los mensajes de un chat específico.
+     * Obtiene todos los mensajes de un chat especifico.
      *
+     * @param em El EntityManager
      * @param idChat El ID del chat
-     * @param limit Número máximo de resultados (≤ 100)
+     * @param limit Numero maximo de resultados (≤ 100)
      * @return Lista de mensajes del chat ordenados por fecha
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Mensaje> obtenerMensajesPorChat(Long idChat, int limit) throws Exception;
+    List<Mensaje> obtenerMensajesPorChat(EntityManager em, Long idChat, int limit) throws Exception;
 
     /**
-     * Obtiene los mensajes enviados por un estudiante en un chat específico.
+     * Obtiene los mensajes enviados por un estudiante en un chat especifico.
      *
+     * @param em El EntityManager
      * @param idChat El ID del chat
      * @param idEstudianteEmisor El ID del estudiante emisor
-     * @param limit Número máximo de resultados (≤ 100)
+     * @param limit Numero maximo de resultados (≤ 100)
      * @return Lista de mensajes del estudiante en ese chat
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Mensaje> obtenerMensajesPorChatYEmisor(Long idChat, Long idEstudianteEmisor, int limit) throws Exception;
+    List<Mensaje> obtenerMensajesPorChatYEmisor(EntityManager em, Long idChat, Long idEstudianteEmisor, int limit) throws Exception;
 
     /**
      * Obtiene todos los mensajes enviados por un estudiante en todos sus chats.
      *
+     * @param em El EntityManager
      * @param idEstudianteEmisor El ID del estudiante emisor
-     * @param limit Número máximo de resultados (≤ 100)
+     * @param limit Numero maximo de resultados (≤ 100)
      * @return Lista de mensajes enviados por el estudiante
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Mensaje> obtenerMensajesPorEmisor(Long idEstudianteEmisor, int limit) throws Exception;
+    List<Mensaje> obtenerMensajesPorEmisor(EntityManager em, Long idEstudianteEmisor, int limit) throws Exception;
 
     /**
-     * Busca mensajes por fecha de envío.
+     * Busca mensajes por fecha de envio.
      *
+     * @param em El EntityManager
      * @param fecha La fecha a buscar
-     * @param limit Número máximo de resultados (≤ 100)
+     * @param limit Numero maximo de resultados (≤ 100)
      * @return Lista de mensajes enviados en esa fecha
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Mensaje> buscarPorFechaEnvio(LocalDateTime fecha, int limit) throws Exception;
+    List<Mensaje> buscarPorFechaEnvio(EntityManager em, LocalDateTime fecha, int limit) throws Exception;
 
     /**
      * Busca mensajes en un rango de fechas.
      *
+     * @param em El EntityManager
      * @param fechaInicio Fecha de inicio del rango
      * @param fechaFin Fecha de fin del rango
-     * @param limit Número máximo de resultados (≤ 100)
+     * @param limit Numero maximo de resultados (≤ 100)
      * @return Lista de mensajes en el rango de fechas
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Mensaje> buscarPorRangoFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin, int limit) throws Exception;
+    List<Mensaje> buscarPorRangoFechas(EntityManager em, LocalDateTime fechaInicio, LocalDateTime fechaFin, int limit) throws Exception;
 
     /**
-     * Busca mensajes que contengan una palabra o frase específica.
+     * Busca mensajes que contengan una palabra o frase especifica.
      *
+     * @param em El EntityManager
      * @param textoBusqueda El texto a buscar en el contenido
-     * @param limit Número máximo de resultados (≤ 100)
+     * @param limit Numero maximo de resultados (≤ 100)
      * @return Lista de mensajes que contienen el texto
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Mensaje> buscarPorContenido(String textoBusqueda, int limit) throws Exception;
+    List<Mensaje> buscarPorContenido(EntityManager em, String textoBusqueda, int limit) throws Exception;
 
     /**
-     * Cuenta el número de mensajes en un chat.
+     * Cuenta el numero de mensajes en un chat.
      *
+     * @param em El EntityManager
      * @param idChat El ID del chat
-     * @return Número de mensajes en el chat
+     * @return Numero de mensajes en el chat
      * @throws Exception Si ocurre un error durante la consulta
      */
-    Long contarMensajesPorChat(Long idChat) throws Exception;
+    Long contarMensajesPorChat(EntityManager em, Long idChat) throws Exception;
 
     /**
-     * Cuenta el número de mensajes enviados por un estudiante.
+     * Cuenta el numero de mensajes enviados por un estudiante.
      *
+     * @param em El EntityManager
      * @param idEstudianteEmisor El ID del estudiante
-     * @return Número de mensajes enviados
+     * @return Numero de mensajes enviados
      * @throws Exception Si ocurre un error durante la consulta
      */
-    Long contarMensajesPorEmisor(Long idEstudianteEmisor) throws Exception;
+    Long contarMensajesPorEmisor(EntityManager em, Long idEstudianteEmisor) throws Exception;
 
     /**
-     * Obtiene los mensajes más recientes de un chat.
+     * Obtiene los mensajes mas recientes de un chat.
      *
+     * @param em El EntityManager
      * @param idChat El ID del chat
-     * @param limit Número máximo de resultados (≤ 100)
-     * @return Lista de mensajes más recientes ordenados por fecha descendente
+     * @param limit Numero maximo de resultados (≤ 100)
+     * @return Lista de mensajes mas recientes ordenados por fecha descendente
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Mensaje> obtenerMensajesRecientes(Long idChat, int limit) throws Exception;
+    List<Mensaje> obtenerMensajesRecientes(EntityManager em, Long idChat, int limit) throws Exception;
 
     /**
-     * Obtiene el último mensaje enviado en un chat.
+     * Obtiene el ultimo mensaje enviado en un chat.
      *
+     * @param em El EntityManager
      * @param idChat El ID del chat
-     * @return El último mensaje del chat o null si no hay mensajes
+     * @return El ultimo mensaje del chat o null si no hay mensajes
      * @throws Exception Si ocurre un error durante la consulta
      */
-    Mensaje obtenerUltimoMensajeDelChat(Long idChat) throws Exception;
+    Mensaje obtenerUltimoMensajeDelChat(EntityManager em, Long idChat) throws Exception;
 
     /**
      * Elimina todos los mensajes de un chat.
      *
+     * @param em El EntityManager
      * @param idChat El ID del chat
-     * @return Número de mensajes eliminados
-     * @throws Exception Si ocurre un error durante la eliminación
+     * @return Numero de mensajes eliminados
+     * @throws Exception Si ocurre un error durante la eliminacion
      */
-    int eliminarMensajesDelChat(Long idChat) throws Exception;
+    int eliminarMensajesDelChat(EntityManager em, Long idChat) throws Exception;
 
     /**
      * Obtiene el chat al que pertenece un mensaje.
      *
+     * @param em El EntityManager
      * @param idMensaje El ID del mensaje
      * @return El chat del mensaje
      * @throws Exception Si ocurre un error durante la consulta
      */
-    Chat obtenerChatDelMensaje(Long idMensaje) throws Exception;
+    Chat obtenerChatDelMensaje(EntityManager em, Long idMensaje) throws Exception;
 }

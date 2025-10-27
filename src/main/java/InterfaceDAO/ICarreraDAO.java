@@ -2,6 +2,7 @@ package InterfaceDAO;
 
 import Domain.Carrera;
 import Domain.Estudiante;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 
 /**
@@ -10,50 +11,56 @@ import java.util.List;
  *
  * @author Alex Adrian Nieblas Moreno - 252865
  */
+
 public interface ICarreraDAO extends IGenericDAO<Carrera, Long> {
 
     /**
      * Busca una carrera por su nombre.
      *
+     * @param em El EntityManager
      * @param nombreCarrera El nombre de la carrera a buscar
      * @return La carrera encontrada o null si no existe
-     * @throws Exception Si ocurre un error durante la búsqueda
+     * @throws Exception Si ocurre un error durante la busqueda
      */
-    Carrera buscarPorNombre(String nombreCarrera) throws Exception;
+    Carrera buscarPorNombre(EntityManager em, String nombreCarrera) throws Exception;
 
     /**
      * Obtiene todas las carreras que tienen al menos un estudiante registrado.
      *
+     * @param em El EntityManager
      * @return Lista de carreras con estudiantes
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Carrera> listarCarrerasConEstudiantes() throws Exception;
+    List<Carrera> listarCarrerasConEstudiantes(EntityManager em) throws Exception;
 
     /**
-     * Cuenta el número de estudiantes inscritos en una carrera específica.
+     * Cuenta el numero de estudiantes inscritos en una carrera especifica.
      *
+     * @param em El EntityManager
      * @param idCarrera El ID de la carrera
-     * @return Número de estudiantes en la carrera
+     * @return Numero de estudiantes en la carrera
      * @throws Exception Si ocurre un error durante la consulta
      */
-    Long contarEstudiantesPorCarrera(Long idCarrera) throws Exception;
+    Long contarEstudiantesPorCarrera(EntityManager em, Long idCarrera) throws Exception;
 
     /**
-     * Obtiene los estudiantes de una carrera específica.
+     * Obtiene los estudiantes de una carrera especifica.
      *
+     * @param em El EntityManager
      * @param idCarrera El ID de la carrera
-     * @param limit Número máximo de resultados (≤ 100)
+     * @param limit Numero maximo de resultados (≤ 100)
      * @return Lista de estudiantes de la carrera
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Estudiante> obtenerEstudiantesPorCarrera(Long idCarrera, int limit) throws Exception;
+    List<Estudiante> obtenerEstudiantesPorCarrera(EntityManager em, Long idCarrera, int limit) throws Exception;
 
     /**
-     * Obtiene las carreras más populares ordenadas por número de estudiantes.
+     * Obtiene las carreras mas populares ordenadas por numero de estudiantes.
      *
-     * @param limit Número máximo de resultados (≤ 100)
+     * @param em El EntityManager
+     * @param limit Numero maximo de resultados (≤ 100)
      * @return Lista de carreras ordenadas por popularidad
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Carrera> obtenerCarrerasMasPopulares(int limit) throws Exception;
+    List<Carrera> obtenerCarrerasMasPopulares(EntityManager em, int limit) throws Exception;
 }

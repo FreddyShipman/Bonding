@@ -1,5 +1,6 @@
 package InterfaceDAO;
 
+import jakarta.persistence.EntityManager;
 import java.util.List;
 
 /**
@@ -10,51 +11,16 @@ import java.util.List;
  * @param <T> Tipo de entidad
  * @param <ID> Tipo de la clave primaria
  */
+
 public interface IGenericDAO<T, ID> {
+    
+    T crear(EntityManager em, T entidad) throws Exception;
 
-    /**
-     * Crea una nueva entidad en la base de datos.
-     *
-     * @param entidad La entidad a crear
-     * @return La entidad creada con su ID generado
-     * @throws Exception Si ocurre un error durante la creación
-     */
-    T crear(T entidad) throws Exception;
+    T buscarPorId(EntityManager em, ID id) throws Exception;
 
-    /**
-     * Busca una entidad por su ID.
-     *
-     * @param id El ID de la entidad a buscar
-     * @return La entidad encontrada o null si no existe
-     * @throws Exception Si ocurre un error durante la búsqueda
-     */
-    T buscarPorId(ID id) throws Exception;
+    List<T> listar(EntityManager em, int limit) throws Exception;
 
-    /**
-     * Lista todas las entidades con un límite máximo.
-     *
-     * @param limit Número máximo de resultados (≤ 100)
-     * @return Lista de entidades
-     * @throws Exception Si ocurre un error durante la consulta
-     * @throws IllegalArgumentException Si limit > 100
-     */
-    List<T> listar(int limit) throws Exception;
+    T actualizar(EntityManager em, T entidad) throws Exception;
 
-    /**
-     * Actualiza una entidad existente.
-     *
-     * @param entidad La entidad con los datos actualizados
-     * @return La entidad actualizada
-     * @throws Exception Si ocurre un error durante la actualización
-     */
-    T actualizar(T entidad) throws Exception;
-
-    /**
-     * Elimina una entidad por su ID.
-     *
-     * @param id El ID de la entidad a eliminar
-     * @return true si se eliminó correctamente, false en caso contrario
-     * @throws Exception Si ocurre un error durante la eliminación
-     */
-    boolean eliminar(ID id) throws Exception;
+    boolean eliminar(EntityManager em, ID id) throws Exception;
 }

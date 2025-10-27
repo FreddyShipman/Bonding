@@ -2,6 +2,7 @@ package InterfaceDAO;
 
 import Domain.Preferencia;
 import Domain.Estudiante;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 
 /**
@@ -10,65 +11,72 @@ import java.util.List;
  *
  * @author Alex Adrian Nieblas Moreno - 252865
  */
+
 public interface IPreferenciaDAO extends IGenericDAO<Preferencia, Long> {
 
     /**
-     * Busca la preferencia asociada a un estudiante específico.
+     * Busca la preferencia asociada a un estudiante especifico.
      *
+     * @param em El EntityManager
      * @param idEstudiante El ID del estudiante
      * @return La preferencia del estudiante o null si no existe
-     * @throws Exception Si ocurre un error durante la búsqueda
+     * @throws Exception Si ocurre un error durante la busqueda
      */
-    Preferencia buscarPorEstudiante(Long idEstudiante) throws Exception;
+    Preferencia buscarPorEstudiante(EntityManager em, Long idEstudiante) throws Exception;
 
     /**
      * Obtiene todos los estudiantes que tienen preferencias configuradas.
      *
-     * @param limit Número máximo de resultados (≤ 100)
+     * @param em El EntityManager
+     * @param limit Numero maximo de resultados (≤ 100)
      * @return Lista de estudiantes con preferencias
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Estudiante> obtenerEstudiantesConPreferencias(int limit) throws Exception;
+    List<Estudiante> obtenerEstudiantesConPreferencias(EntityManager em, int limit) throws Exception;
 
     /**
-     * Busca preferencias por género preferido.
+     * Busca preferencias por genero preferido.
      *
-     * @param generoPreferido El género preferido a buscar
-     * @param limit Número máximo de resultados (≤ 100)
-     * @return Lista de preferencias con ese género
+     * @param em El EntityManager
+     * @param generoPreferido El genero preferido a buscar
+     * @param limit Numero maximo de resultados (≤ 100)
+     * @return Lista de preferencias con ese genero
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Preferencia> buscarPorGeneroPreferido(String generoPreferido, int limit) throws Exception;
+    List<Preferencia> buscarPorGeneroPreferido(EntityManager em, String generoPreferido, int limit) throws Exception;
 
     /**
-     * Busca preferencias que incluyan un rango de edad específico.
+     * Busca preferencias que incluyan un rango de edad especifico.
      *
-     * @param edadMinima Edad mínima a buscar
-     * @param edadMaxima Edad máxima a buscar
-     * @param limit Número máximo de resultados (≤ 100)
+     * @param em El EntityManager
+     * @param edadMinima Edad minima a buscar
+     * @param edadMaxima Edad maxima a buscar
+     * @param limit Numero maximo de resultados (≤ 100)
      * @return Lista de preferencias que coinciden con el rango
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Preferencia> buscarPorRangoEdad(Integer edadMinima, Integer edadMaxima, int limit) throws Exception;
+    List<Preferencia> buscarPorRangoEdad(EntityManager em, Integer edadMinima, Integer edadMaxima, int limit) throws Exception;
 
     /**
-     * Busca preferencias que incluyan una carrera preferida específica.
+     * Busca preferencias que incluyan una carrera preferida especifica.
      *
+     * @param em El EntityManager
      * @param idCarrera El ID de la carrera preferida
-     * @param limit Número máximo de resultados (≤ 100)
+     * @param limit Numero maximo de resultados (≤ 100)
      * @return Lista de preferencias con esa carrera preferida
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Preferencia> buscarPorCarreraPreferida(Long idCarrera, int limit) throws Exception;
+    List<Preferencia> buscarPorCarreraPreferida(EntityManager em, Long idCarrera, int limit) throws Exception;
 
     /**
      * Encuentra estudiantes compatibles basados en las preferencias de un estudiante.
-     * (Consulta compleja que combina género, edad y carrera)
+     * (Consulta compleja que combina genero, edad y carrera)
      *
+     * @param em El EntityManager
      * @param idEstudiante El ID del estudiante
-     * @param limit Número máximo de resultados (≤ 100)
-     * @return Lista de estudiantes compatibles según preferencias
+     * @param limit Numero maximo de resultados (≤ 100)
+     * @return Lista de estudiantes compatibles segun preferencias
      * @throws Exception Si ocurre un error durante la consulta
      */
-    List<Estudiante> buscarEstudiantesCompatibles(Long idEstudiante, int limit) throws Exception;
+    List<Estudiante> buscarEstudiantesCompatibles(EntityManager em, Long idEstudiante, int limit) throws Exception;
 }
