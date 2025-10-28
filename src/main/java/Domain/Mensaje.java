@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 /**
  * @author Fred
  */
+
 @Entity
 public class Mensaje implements Serializable {
 
@@ -24,7 +25,9 @@ public class Mensaje implements Serializable {
 
     private LocalDateTime fechaEnvio;
 
-    private Long idEstudianteEmisor;
+    @ManyToOne
+    @JoinColumn(name = "id_estudiante_emisor")
+    private Estudiante estudianteEmisor;
 
     @ManyToOne
     @JoinColumn(name = "idChat")
@@ -33,11 +36,12 @@ public class Mensaje implements Serializable {
     public Mensaje() {
     }
 
-    public Mensaje(Long idMensaje, String contenido, LocalDateTime fechaEnvio, Long idEstudianteEmisor) {
+    public Mensaje(Long idMensaje, String contenido, LocalDateTime fechaEnvio, Estudiante estudianteEmisor, Chat chat) {
         this.idMensaje = idMensaje;
         this.contenido = contenido;
         this.fechaEnvio = fechaEnvio;
-        this.idEstudianteEmisor = idEstudianteEmisor;
+        this.estudianteEmisor = estudianteEmisor;
+        this.chat = chat;
     }
 
     public Long getIdMensaje() {
@@ -64,12 +68,12 @@ public class Mensaje implements Serializable {
         this.fechaEnvio = fechaEnvio;
     }
 
-    public Long getIdEstudianteEmisor() {
-        return idEstudianteEmisor;
+    public Estudiante getEstudianteEmisor() {
+        return estudianteEmisor;
     }
 
-    public void setIdEstudianteEmisor(Long idEstudianteEmisor) {
-        this.idEstudianteEmisor = idEstudianteEmisor;
+    public void setEstudianteEmisor(Estudiante estudianteEmisor) {
+        this.estudianteEmisor = estudianteEmisor;
     }
 
     public Chat getChat() {

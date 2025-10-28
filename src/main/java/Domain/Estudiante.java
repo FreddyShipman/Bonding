@@ -18,6 +18,7 @@ import java.util.Set;
  *
  * @author JOSE ALFREDO GUZMAN MORENO - 252524
  */
+
 @Entity
 public class Estudiante implements Serializable {
 
@@ -27,19 +28,17 @@ public class Estudiante implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idEstudiante;
 
-     private String nombreEstudiante;
+    private String nombreEstudiante;
     private String apellidoPaterno;
     private String apellidoMaterno;
     private String correoInstitucional;
     private String contrasena;
     private String fotoPerfil;
 
-    // Relacion: Uno a Muchos con Carrera
     @ManyToOne
     @JoinColumn(name = "id_carrera")
     private Carrera carrera;
 
-    // Relacion: Muchos a Muchos con Hobby
     @ManyToMany
     @JoinTable(
         name = "estudiante_hobby",
@@ -48,7 +47,6 @@ public class Estudiante implements Serializable {
     )
     private Set<Hobby> hobbies;
 
-    // Relacion: Muchos a Muchos con Interaccion
     @ManyToMany
     @JoinTable(
         name = "estudiante_interaccion",
@@ -57,19 +55,15 @@ public class Estudiante implements Serializable {
     )
     private Set<Interaccion> interacciones;
     
-    // Relacion: Uno a Muchos para Likes DADOS
     @OneToMany(mappedBy = "estudianteEmisor")
     private Set<Like> likesDados;
 
-    // Relacion: Uno a Muchos para Likes RECIBIDOS
     @OneToMany(mappedBy = "estudianteReceptor")
     private Set<Like> likesRecibidos;
     
-    // Relacion: Muchos a Muchos con Match
     @ManyToMany(mappedBy = "estudiantes")
     private Set<Match> matches;
     
-    // Relacion: Muchos a Muchos con Interes
     @ManyToMany
     @JoinTable(
         name = "estudiante_interes",
@@ -78,14 +72,16 @@ public class Estudiante implements Serializable {
     )
     private Set<Interes> intereses;
     
-    // Relacion: Uno a uno con Preferencia
     @OneToOne(mappedBy = "estudiante", cascade = CascadeType.ALL)
     private Preferencia preferencia;
+
+    @OneToMany(mappedBy = "estudianteEmisor")
+    private Set<Mensaje> mensajesEnviados;
 
     public Estudiante() {
     }
 
-    public Estudiante(Long idEstudiante, String nombreEstudiante, String apellidoPaterno, String apellidoMaterno, String correoInstitucional, String contrasena, String fotoPerfil, Carrera carrera, Set<Hobby> hobbies, Set<Interaccion> interacciones, Set<Like> likesDados, Set<Like> likesRecibidos, Set<Match> matches, Set<Interes> intereses, Preferencia preferencia) {
+    public Estudiante(Long idEstudiante, String nombreEstudiante, String apellidoPaterno, String apellidoMaterno, String correoInstitucional, String contrasena, String fotoPerfil, Carrera carrera, Set<Hobby> hobbies, Set<Interaccion> interacciones, Set<Like> likesDados, Set<Like> likesRecibidos, Set<Match> matches, Set<Interes> intereses, Preferencia preferencia , Set<Mensaje> mensajesEnviados) {
         this.idEstudiante = idEstudiante;
         this.nombreEstudiante = nombreEstudiante;
         this.apellidoPaterno = apellidoPaterno;
@@ -101,6 +97,7 @@ public class Estudiante implements Serializable {
         this.matches = matches;
         this.intereses = intereses;
         this.preferencia = preferencia;
+        this.mensajesEnviados = mensajesEnviados;
     }
     
     public Long getIdEstudiante() {
@@ -221,5 +218,13 @@ public class Estudiante implements Serializable {
 
     public void setPreferencia(Preferencia preferencia) {
         this.preferencia = preferencia;
+    }
+
+    public Set<Mensaje> getMensajesEnviados() {
+        return mensajesEnviados;
+    }
+
+    public void setMensajesEnviados(Set<Mensaje> mensajesEnviados) {
+        this.mensajesEnviados = mensajesEnviados;
     }
 }
