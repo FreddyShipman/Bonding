@@ -127,7 +127,13 @@ public class DTOMapper {
         dto.setIdMensaje(mensaje.getIdMensaje());
         dto.setContenido(mensaje.getContenido());
         dto.setFechaEnvio(mensaje.getFechaEnvio());
-        dto.setIdEstudianteEmisor(mensaje.getIdEstudianteEmisor());
+        if (mensaje.getEstudianteEmisor() != null) {
+            dto.setIdEstudianteEmisor(mensaje.getEstudianteEmisor().getIdEstudiante());
+            dto.setNombreEmisor(mensaje.getEstudianteEmisor().getNombreEstudiante());
+        } else {
+            dto.setIdEstudianteEmisor(null);
+            dto.setNombreEmisor("Desconocido");
+        }
 
         if (mensaje.getChat() != null) {
             dto.setIdChat(mensaje.getChat().getIdChat());
@@ -255,8 +261,6 @@ public class DTOMapper {
         mensaje.setIdMensaje(dto.getIdMensaje());
         mensaje.setContenido(dto.getContenido());
         mensaje.setFechaEnvio(dto.getFechaEnvio());
-        mensaje.setIdEstudianteEmisor(dto.getIdEstudianteEmisor());
-
         return mensaje;
     }
 
