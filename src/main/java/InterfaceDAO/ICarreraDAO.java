@@ -63,4 +63,5 @@ public interface ICarreraDAO extends IGenericDAO<Carrera, Long> {
      * @throws Exception Si ocurre un error durante la consulta
      */
     List<Carrera> obtenerCarrerasMasPopulares(EntityManager em, int limit) throws Exception;
+    
 }

@@ -52,4 +52,13 @@ public class Carrera implements Serializable {
     public void setEstudiantes(Set<Estudiante> estudiantes) {
         this.estudiantes = estudiantes;
     }
+    
+    /**
+     * Este método es usado por el JComboBox para mostrar el nombre
+     * en lugar de 'Domain.Carrera@...'
+     */
+    @Override
+    public String toString() {
+        return this.nombreCarrera;
+    }
 }
