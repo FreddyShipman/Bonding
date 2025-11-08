@@ -2,6 +2,7 @@ package Vistas;
 
 // --- CAMBIO: Imports para TODOS los servicios ---
 import Domain.Estudiante;
+import Excepciones.*;
 import Service.CarreraService;
 import Service.EstudianteService;
 import Service.HobbyService;
@@ -37,6 +38,9 @@ public class FrmLogin extends JFrame {
     private JButton btnIngresar;
     private JLabel lblRegistro;
     private JLabel lblLogo;
+    private JCheckBox chkMostrarPassword;
+    private JLabel lblErrorEmail;
+    private JLabel lblErrorPassword;
 
     // --- Colores del diseno ---
     private static final Color COLOR_FONDO = new Color(240, 242, 245);
@@ -111,7 +115,7 @@ public class FrmLogin extends JFrame {
         panelFormulario.add(lblSubtitulo, gbc);
 
         gbc.gridy++;
-        JLabel lblEmail = new JLabel("Correo Institucional");
+        JLabel lblEmail = new JLabel("Correo Institucional *");
         lblEmail.setFont(new Font("Arial", Font.PLAIN, 12));
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 0, 0);
@@ -121,24 +125,50 @@ public class FrmLogin extends JFrame {
         txtEmail = new JTextField(25);
         txtEmail.setFont(new Font("Arial", Font.PLAIN, 14));
         gbc.ipady = 10;
-        gbc.insets = new Insets(5, 0, 5, 0);
+        gbc.insets = new Insets(5, 0, 0, 0);
         addPlaceholder(txtEmail, "username@itson.edu.mx");
+        // Validación en tiempo real del correo
+        txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                validarCorreoEnTiempoReal();
+            }
+        });
         panelFormulario.add(txtEmail, gbc);
 
+        // Label de error para email
         gbc.gridy++;
-        JLabel lblPassword = new JLabel("Contraseña");
+        lblErrorEmail = new JLabel(" ");
+        lblErrorEmail.setFont(new Font("Arial", Font.PLAIN, 11));
+        lblErrorEmail.setForeground(Color.RED);
+        gbc.ipady = 0;
+        gbc.insets = new Insets(0, 0, 5, 0);
+        panelFormulario.add(lblErrorEmail, gbc);
+
+        gbc.gridy++;
+        JLabel lblPassword = new JLabel("Contraseña *");
         lblPassword.setFont(new Font("Arial", Font.PLAIN, 12));
         gbc.ipady = 0;
-        gbc.insets = new Insets(10, 0, 0, 0);
+        gbc.insets = new Insets(5, 0, 0, 0);
         panelFormulario.add(lblPassword, gbc);
 
         gbc.gridy++;
         txtPassword = new JPasswordField();
         txtPassword.setFont(new Font("Arial", Font.PLAIN, 14));
         gbc.ipady = 10;
-        gbc.insets = new Insets(5, 0, 5, 0);
+        gbc.insets = new Insets(5, 0, 0, 0);
         addPlaceholder(txtPassword, "Ingresa tu contraseña");
         panelFormulario.add(txtPassword, gbc);
+
+        // Checkbox para mostrar contraseña
+        gbc.gridy++;
+        chkMostrarPassword = new JCheckBox("Mostrar contraseña");
+        chkMostrarPassword.setFont(new Font("Arial", Font.PLAIN, 11));
+        chkMostrarPassword.setBackground(COLOR_PANEL_BLANCO);
+        chkMostrarPassword.setFocusPainted(false);
+        gbc.ipady = 0;
+        gbc.insets = new Insets(5, 0, 5, 0);
+        chkMostrarPassword.addActionListener(e -> toggleMostrarPassword());
+        panelFormulario.add(chkMostrarPassword, gbc);
 
         gbc.gridy++;
         btnIngresar = new JButton("Ingresar");
@@ -236,30 +266,113 @@ public class FrmLogin extends JFrame {
     }
 
     private void iniciarSesion() {
-        // ... (Tu código de iniciarSesion va aquí, no cambia) ...
         String email = txtEmail.getText();
         String password = new String(txtPassword.getPassword());
 
+        // Validar placeholders y campos vacíos
         if (email.equals("username@itson.edu.mx") || email.isEmpty() ||
             password.equals("Ingresa tu contraseña") || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Por favor, ingresa tu correo y contraseña.", "Campos Vacíos", JOptionPane.WARNING_MESSAGE);
+            mostrarError("Por favor, ingresa tu correo y contraseña.", "Campos Vacíos");
             return;
         }
 
         try {
-            Estudiante estudianteLogueado = estudianteService.autenticar(email, password); 
-            if (estudianteLogueado != null) {
-                JOptionPane.showMessageDialog(this, "¡Bienvenido, " + estudianteLogueado.getNombreEstudiante() + "!", "Inicio de Sesión Exitoso", JOptionPane.INFORMATION_MESSAGE);
-                
-                // --- PROXIMO PASO: Abrir la pantalla principal ---
-                // FrmPrincipal frmPrincipal = new FrmPrincipal(estudianteLogueado, estudianteService, carreraService, hobbyService, interesService);
-                // frmPrincipal.setVisible(true);
-                this.dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, "Correo institucional o contraseña incorrectos.", "Error de Inicio de Sesión", JOptionPane.ERROR_MESSAGE);
-            }
+            Estudiante estudianteLogueado = estudianteService.autenticar(email, password);
+
+            // Si llega aquí, la autenticación fue exitosa
+            JOptionPane.showMessageDialog(this,
+                "¡Bienvenido, " + estudianteLogueado.getNombreEstudiante() + "!",
+                "Inicio de Sesión Exitoso",
+                JOptionPane.INFORMATION_MESSAGE);
+
+            // --- PROXIMO PASO: Abrir la pantalla principal ---
+            // FrmPrincipal frmPrincipal = new FrmPrincipal(estudianteLogueado, estudianteService, carreraService, hobbyService, interesService);
+            // frmPrincipal.setVisible(true);
+            this.dispose();
+
+        } catch (AutenticacionException e) {
+            // Error de credenciales inválidas
+            mostrarError("Correo institucional o contraseña incorrectos.\nPor favor, verifica tus credenciales.",
+                        "Error de Autenticación");
+            txtPassword.setText("Ingresa tu contraseña");
+            txtPassword.setForeground(COLOR_PLACEHOLDER);
+            txtPassword.setEchoChar((char) 0);
+
+        } catch (ValidacionException e) {
+            // Error de validación de campos
+            mostrarError(e.getMessage(), "Error de Validación");
+
+        } catch (DatabaseException e) {
+            // Error de base de datos
+            mostrarError("No se pudo conectar con el servidor.\nPor favor, intenta más tarde.",
+                        "Error de Conexión");
+            System.err.println("Error de BD: " + e.getMensajeCompleto());
+
+        } catch (BondingException e) {
+            // Otras excepciones del sistema
+            mostrarError("Ocurrió un error inesperado: " + e.getMessage(),
+                        "Error del Sistema");
+            System.err.println("Error: " + e.getMensajeCompleto());
+
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error de Inicio de Sesión", JOptionPane.ERROR_MESSAGE);
+            // Cualquier otra excepción no manejada
+            mostrarError("Ocurrió un error inesperado.\nPor favor, contacta al administrador.",
+                        "Error Desconocido");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Método auxiliar para mostrar mensajes de error
+     */
+    private void mostrarError(String mensaje, String titulo) {
+        JOptionPane.showMessageDialog(this,
+            mensaje,
+            titulo,
+            JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Valida el formato del correo en tiempo real
+     */
+    private void validarCorreoEnTiempoReal() {
+        String email = txtEmail.getText();
+
+        // Si está vacío o es el placeholder, no mostrar error
+        if (email.isEmpty() || email.equals("username@itson.edu.mx")) {
+            lblErrorEmail.setText(" ");
+            txtEmail.setBorder(new JTextField().getBorder());
+            return;
+        }
+
+        // Validar formato básico de correo
+        if (!email.contains("@")) {
+            lblErrorEmail.setText("✗ Formato de correo inválido");
+            txtEmail.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+            return;
+        }
+
+        // Validar que sea correo institucional
+        if (!email.toLowerCase().endsWith("@itson.edu.mx")) {
+            lblErrorEmail.setText("⚠ Debe ser correo institucional (@itson.edu.mx)");
+            txtEmail.setBorder(BorderFactory.createLineBorder(new Color(255, 140, 0), 1));
+            return;
+        }
+
+        // Correo válido
+        lblErrorEmail.setText("✓ Correo válido");
+        lblErrorEmail.setForeground(new Color(0, 128, 0));
+        txtEmail.setBorder(BorderFactory.createLineBorder(new Color(0, 128, 0), 1));
+    }
+
+    /**
+     * Alterna la visibilidad de la contraseña
+     */
+    private void toggleMostrarPassword() {
+        if (chkMostrarPassword.isSelected()) {
+            txtPassword.setEchoChar((char) 0);
+        } else {
+            txtPassword.setEchoChar('•');
         }
     }
 
