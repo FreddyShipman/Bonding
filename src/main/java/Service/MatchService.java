@@ -181,4 +181,19 @@ public class MatchService implements IMatchService {
             }
         }
     }
+    
+    @Override
+    public Match buscarMatchPorEstudiantes(Long idEstudiante1, Long idEstudiante2) throws Exception {
+        EntityManager em = null;
+        try {
+            em = JpaUtil.getInstance().getEntityManager();
+            return this.matchDAO.buscarMatchPorEstudiantes(em, idEstudiante1, idEstudiante2);
+        } catch (Exception e) {
+            throw new Exception("Error en servicio al buscar match por estudiantes: " + e.getMessage(), e);
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
 }

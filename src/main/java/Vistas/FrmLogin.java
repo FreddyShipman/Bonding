@@ -1,16 +1,26 @@
 package Vistas;
 
-// --- CAMBIO: Imports para TODOS los servicios ---
+// --- CAMBIO: Imports para TODOS los 9 servicios ---
 import Domain.Estudiante;
 import Excepciones.*;
 import Service.CarreraService;
 import Service.EstudianteService;
 import Service.HobbyService;
 import Service.InteresService;
+import Service.LikeService;
+import Service.MatchService;
+import Service.ChatService;
+import Service.MensajeService;
+import Service.PreferenciaService; 
 import InterfaceService.ICarreraService;
 import InterfaceService.IEstudianteService;
 import InterfaceService.IHobbyService;
 import InterfaceService.IInteresService;
+import InterfaceService.ILikeService;
+import InterfaceService.IMatchService;
+import InterfaceService.IChatService;
+import InterfaceService.IMensajeService;
+import InterfaceService.IPreferenciaService; 
 
 // Imports de Java Swing
 import javax.swing.*;
@@ -22,15 +32,20 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URL; // Import para getResource
+import java.net.URL;
 
 public class FrmLogin extends JFrame {
 
-    // --- CAMBIO: Campos para TODOS los servicios ---
+    // --- Servicios (LOS 9) ---
     private IEstudianteService estudianteService;
     private ICarreraService carreraService;
     private IHobbyService hobbyService;
     private IInteresService interesService;
+    private ILikeService likeService;
+    private IMatchService matchService;
+    private IChatService chatService;
+    private IMensajeService mensajeService;
+    private IPreferenciaService preferenciaService; // AÑADIDO
 
     // --- Componentes UI ---
     private JTextField txtEmail;
@@ -38,74 +53,67 @@ public class FrmLogin extends JFrame {
     private JButton btnIngresar;
     private JLabel lblRegistro;
     private JLabel lblLogo;
-    private JCheckBox chkMostrarPassword;
-    private JLabel lblErrorEmail;
-    private JLabel lblErrorPassword;
 
-    // --- Colores del diseno ---
+    // --- Colores ---
     private static final Color COLOR_FONDO = new Color(240, 242, 245);
     private static final Color COLOR_PANEL_BLANCO = Color.WHITE;
     private static final Color COLOR_BOTON = new Color(0, 86, 179);
     private static final Color COLOR_TEXTO_GRIS = new Color(100, 100, 100);
     private static final Color COLOR_PLACEHOLDER = new Color(180, 180, 180);
 
-    // --- CAMBIO: Constructor ahora recibe TODOS los servicios ---
+    // --- CAMBIO: Constructor ahora recibe los 9 servicios ---
     public FrmLogin(IEstudianteService estudianteService, 
                     ICarreraService carreraService, 
                     IHobbyService hobbyService, 
-                    IInteresService interesService) {
+                    IInteresService interesService,
+                    ILikeService likeService,
+                    IMatchService matchService,
+                    IChatService chatService,
+                    IMensajeService mensajeService,
+                    IPreferenciaService preferenciaService) { // AÑADIDO
         
-        // Asigna todos los servicios
         this.estudianteService = estudianteService;
         this.carreraService = carreraService;
         this.hobbyService = hobbyService;
         this.interesService = interesService;
+        this.likeService = likeService;
+        this.matchService = matchService;
+        this.chatService = chatService;
+        this.mensajeService = mensajeService;
+        this.preferenciaService = preferenciaService; // AÑADIDO
         
         initComponentes();
         cargarLogo();
     }
 
     private void initComponentes() {
-        // ... (Todo tu código de initComponentes va aquí, no cambia) ...
-        // --- 1. Configuracion de la Ventana ---
+        // (El código de initComponentes no cambia... es solo UI)
         setTitle("Inicio de Sesion");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1024, 768);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         getContentPane().setBackground(COLOR_FONDO);
-
-        // --- 2. Panel de Fondo (Gris) ---
         JPanel panelFondo = new JPanel(new GridBagLayout());
         panelFondo.setBackground(COLOR_FONDO);
         add(panelFondo, BorderLayout.CENTER);
-
-        // --- 3. Panel de Formulario (Blanco) ---
         JPanel panelFormulario = new JPanel(new GridBagLayout());
         panelFormulario.setBackground(COLOR_PANEL_BLANCO);
         panelFormulario.setBorder(new EmptyBorder(40, 50, 40, 50));
-        
-        // --- Configuracion de GridBagLayout ---
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 1.0;
         gbc.insets = new Insets(5, 0, 5, 0); 
-
-        // --- 4. Componentes del Formulario ---
         lblLogo = new JLabel();
         lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.insets = new Insets(0, 0, 10, 0);
         panelFormulario.add(lblLogo, gbc);
-
         gbc.gridy++;
         JLabel lblTitulo = new JLabel("¡Bienvenido de vuelta!");
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 28));
         lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.insets = new Insets(10, 0, 5, 0);
         panelFormulario.add(lblTitulo, gbc);
-
         gbc.gridy++;
         JLabel lblSubtitulo = new JLabel("Inicia sesion para conectar con tus compañeros.");
         lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -113,63 +121,32 @@ public class FrmLogin extends JFrame {
         lblSubtitulo.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.insets = new Insets(0, 0, 25, 0);
         panelFormulario.add(lblSubtitulo, gbc);
-
         gbc.gridy++;
-        JLabel lblEmail = new JLabel("Correo Institucional *");
+        JLabel lblEmail = new JLabel("Correo Institucional");
         lblEmail.setFont(new Font("Arial", Font.PLAIN, 12));
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 0, 0);
         panelFormulario.add(lblEmail, gbc);
-
         gbc.gridy++;
         txtEmail = new JTextField(25);
         txtEmail.setFont(new Font("Arial", Font.PLAIN, 14));
         gbc.ipady = 10;
-        gbc.insets = new Insets(5, 0, 0, 0);
+        gbc.insets = new Insets(5, 0, 5, 0);
         addPlaceholder(txtEmail, "tu.id@potros.itson.edu.mx");
-        // Validación en tiempo real del correo
-        txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                validarCorreoEnTiempoReal();
-            }
-        });
         panelFormulario.add(txtEmail, gbc);
-
-        // Label de error para email
         gbc.gridy++;
-        lblErrorEmail = new JLabel(" ");
-        lblErrorEmail.setFont(new Font("Arial", Font.PLAIN, 11));
-        lblErrorEmail.setForeground(Color.RED);
-        gbc.ipady = 0;
-        gbc.insets = new Insets(0, 0, 5, 0);
-        panelFormulario.add(lblErrorEmail, gbc);
-
-        gbc.gridy++;
-        JLabel lblPassword = new JLabel("Contraseña *");
+        JLabel lblPassword = new JLabel("Contraseña");
         lblPassword.setFont(new Font("Arial", Font.PLAIN, 12));
         gbc.ipady = 0;
-        gbc.insets = new Insets(5, 0, 0, 0);
+        gbc.insets = new Insets(10, 0, 0, 0);
         panelFormulario.add(lblPassword, gbc);
-
         gbc.gridy++;
         txtPassword = new JPasswordField();
         txtPassword.setFont(new Font("Arial", Font.PLAIN, 14));
         gbc.ipady = 10;
-        gbc.insets = new Insets(5, 0, 0, 0);
+        gbc.insets = new Insets(5, 0, 5, 0);
         addPlaceholder(txtPassword, "Ingresa tu contraseña");
         panelFormulario.add(txtPassword, gbc);
-
-        // Checkbox para mostrar contraseña
-        gbc.gridy++;
-        chkMostrarPassword = new JCheckBox("Mostrar contraseña");
-        chkMostrarPassword.setFont(new Font("Arial", Font.PLAIN, 11));
-        chkMostrarPassword.setBackground(COLOR_PANEL_BLANCO);
-        chkMostrarPassword.setFocusPainted(false);
-        gbc.ipady = 0;
-        gbc.insets = new Insets(5, 0, 5, 0);
-        chkMostrarPassword.addActionListener(e -> toggleMostrarPassword());
-        panelFormulario.add(chkMostrarPassword, gbc);
-
         gbc.gridy++;
         btnIngresar = new JButton("Ingresar");
         btnIngresar.setFont(new Font("Arial", Font.BOLD, 14));
@@ -181,7 +158,6 @@ public class FrmLogin extends JFrame {
         gbc.ipady = 12;
         gbc.insets = new Insets(20, 0, 10, 0);
         panelFormulario.add(btnIngresar, gbc);
-
         gbc.gridy++;
         lblRegistro = new JLabel("<html>¿No tienes cuenta? <font color='#0056B3'>Regístrate aquí</font></html>");
         lblRegistro.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -190,19 +166,13 @@ public class FrmLogin extends JFrame {
         gbc.ipady = 0;
         gbc.insets = new Insets(15, 0, 10, 0);
         panelFormulario.add(lblRegistro, gbc);
-
-        // --- 5. Footer ---
         JLabel lblFooter = new JLabel("Ayuda - Términos de Servicio");
         lblFooter.setFont(new Font("Arial", Font.PLAIN, 12));
         lblFooter.setForeground(COLOR_TEXTO_GRIS);
         lblFooter.setHorizontalAlignment(SwingConstants.CENTER);
         lblFooter.setBorder(new EmptyBorder(10, 10, 10, 10));
         add(lblFooter, BorderLayout.SOUTH);
-
-        // --- 6. Anadir panel blanco al panel gris (para centrarlo) ---
         panelFondo.add(panelFormulario, new GridBagConstraints());
-
-        // --- 7. Listeners (Logica) ---
         btnIngresar.addActionListener(e -> iniciarSesion());
         lblRegistro.addMouseListener(new MouseAdapter() {
             @Override
@@ -212,8 +182,8 @@ public class FrmLogin extends JFrame {
         });
     }
 
-    // --- CAMBIO: 'cargarLogo' usa getResource ---
     private void cargarLogo() {
+        // (Sin cambios)
         try {
             URL logoURL = getClass().getResource("/Recursos/Logo.png");
             if (logoURL != null) {
@@ -232,7 +202,7 @@ public class FrmLogin extends JFrame {
     }
 
     private void addPlaceholder(final JTextField field, final String placeholder) {
-        // ... (Tu código de addPlaceholder va aquí, no cambia) ...
+        // (Sin cambios)
         field.setText(placeholder);
         field.setForeground(COLOR_PLACEHOLDER);
         if (field instanceof JPasswordField) {
@@ -269,7 +239,6 @@ public class FrmLogin extends JFrame {
         String email = txtEmail.getText();
         String password = new String(txtPassword.getPassword());
 
-        // Validar placeholders y campos vacíos
         if (email.equals("tu.id@potros.itson.edu.mx") || email.isEmpty() ||
             password.equals("Ingresa tu contraseña") || password.isEmpty()) {
             mostrarError("Por favor, ingresa tu correo y contraseña.", "Campos Vacíos");
@@ -278,117 +247,60 @@ public class FrmLogin extends JFrame {
 
         try {
             Estudiante estudianteLogueado = estudianteService.autenticar(email, password);
-
-            // Si llega aquí, la autenticación fue exitosa
             JOptionPane.showMessageDialog(this,
-                "¡Bienvenido, " + estudianteLogueado.getNombreEstudiante() + "!",
-                "Inicio de Sesión Exitoso",
-                JOptionPane.INFORMATION_MESSAGE);
+                    "¡Bienvenido, " + estudianteLogueado.getNombreEstudiante() + "!",
+                    "Inicio de Sesión Exitoso",
+                    JOptionPane.INFORMATION_MESSAGE);
 
-            // FrmPrincipal frmPrincipal = new FrmPrincipal(estudianteLogueado, estudianteService, carreraService, hobbyService, interesService);
-            // frmPrincipal.setVisible(true);
+            // --- CAMBIO: Navega a FrmExplorar con los 9 servicios ---
+            FrmExplorar frmExplorar = new FrmExplorar(
+                estudianteLogueado,
+                this.estudianteService,
+                this.carreraService,
+                this.hobbyService,
+                this.interesService,
+                this.likeService,
+                this.matchService, 
+                this.chatService, 
+                this.mensajeService,
+                this.preferenciaService // AÑADIDO
+            );
+            frmExplorar.setVisible(true);
             this.dispose();
 
         } catch (AutenticacionException e) {
-            // Error de credenciales inválidas
-            mostrarError("Correo institucional o contraseña incorrectos.\nPor favor, verifica tus credenciales.",
-                        "Error de Autenticación");
-            txtPassword.setText("Ingresa tu contraseña");
-            txtPassword.setForeground(COLOR_PLACEHOLDER);
-            txtPassword.setEchoChar((char) 0);
-
-        } catch (ValidacionException e) {
-            // Error de validación de campos
-            mostrarError(e.getMessage(), "Error de Validación");
-
+            mostrarError("Correo institucional o contraseña incorrectos.", "Error de Autenticación");
         } catch (DatabaseException e) {
-            // Error de base de datos
-            mostrarError("No se pudo conectar con el servidor.\nPor favor, intenta más tarde.",
-                        "Error de Conexión");
-            System.err.println("Error de BD: " + e.getMensajeCompleto());
-
+             mostrarError("No se pudo conectar con el servidor.", "Error de Conexión");
         } catch (BondingException e) {
-            // Otras excepciones del sistema
-            mostrarError("Ocurrió un error inesperado: " + e.getMessage(),
-                        "Error del Sistema");
-            System.err.println("Error: " + e.getMensajeCompleto());
-
+             mostrarError("Ocurrió un error inesperado: " + e.getMessage(), "Error del Sistema");
         } catch (Exception e) {
-            // Cualquier otra excepción no manejada
-            mostrarError("Ocurrió un error inesperado.\nPor favor, contacta al administrador.",
-                        "Error Desconocido");
-            e.printStackTrace();
+            mostrarError("Error desconocido: " + e.getMessage(), "Error");
         }
     }
 
-    /**
-     * Método auxiliar para mostrar mensajes de error
-     */
-    private void mostrarError(String mensaje, String titulo) {
-        JOptionPane.showMessageDialog(this,
-            mensaje,
-            titulo,
-            JOptionPane.ERROR_MESSAGE);
-    }
-
-    /**
-     * Valida el formato del correo en tiempo real
-     */
-    private void validarCorreoEnTiempoReal() {
-        String email = txtEmail.getText();
-
-        // Si está vacío o es el placeholder, no mostrar error
-        if (email.isEmpty() || email.equals("tu.id@potros.itson.edu.mx")) {
-            lblErrorEmail.setText(" ");
-            txtEmail.setBorder(new JTextField().getBorder());
-            return;
-        }
-
-        // Validar formato básico de correo
-        if (!email.contains("@")) {
-            lblErrorEmail.setText("Formato de correo inválido");
-            txtEmail.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
-            return;
-        }
-
-        // Validar que sea correo institucional
-        if (!email.toLowerCase().endsWith("@potros.itson.edu.mx")) {
-            lblErrorEmail.setText("Debe ser correo institucional (@potros.itson.edu.mx)");
-            txtEmail.setBorder(BorderFactory.createLineBorder(new Color(255, 140, 0), 1));
-            return;
-        }
-
-        // Correo válido
-        lblErrorEmail.setText("Correo válido");
-        lblErrorEmail.setForeground(new Color(0, 128, 0));
-        txtEmail.setBorder(BorderFactory.createLineBorder(new Color(0, 128, 0), 1));
-    }
-
-    /**
-     * Alterna la visibilidad de la contraseña
-     */
-    private void toggleMostrarPassword() {
-        if (chkMostrarPassword.isSelected()) {
-            txtPassword.setEchoChar((char) 0);
-        } else {
-            txtPassword.setEchoChar('•');
-        }
-    }
-
-    // --- CAMBIO: 'abrirRegistro' pasa TODOS los servicios ---
+    // --- CAMBIO: 'abrirRegistro' pasa los 9 servicios ---
     private void abrirRegistro() {
-        // Pasa todos los servicios que FrmRegistro necesitará
         FrmRegistro frmRegistro = new FrmRegistro(
             this.estudianteService, 
             this.carreraService,
             this.hobbyService,
-            this.interesService
+            this.interesService,
+            this.likeService,
+            this.matchService,
+            this.chatService,
+            this.mensajeService,
+            this.preferenciaService // AÑADIDO
         ); 
         frmRegistro.setVisible(true);
         this.dispose(); 
     }
+    
+    private void mostrarError(String mensaje, String titulo) {
+        JOptionPane.showMessageDialog(this, mensaje, titulo, JOptionPane.WARNING_MESSAGE);
+    }
 
-    // --- CAMBIO: 'main' ahora crea e inyecta TODOS los servicios ---
+    // --- CAMBIO: 'main' ahora crea e inyecta los 9 servicios ---
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -404,9 +316,17 @@ public class FrmLogin extends JFrame {
                 ICarreraService carService = new CarreraService();
                 IHobbyService hobService = new HobbyService();
                 IInteresService intService = new InteresService();
+                ILikeService likeService = new LikeService();
+                IMatchService matchService = new MatchService();
+                IChatService chatService = new ChatService();
+                IMensajeService mensajeService = new MensajeService();
+                IPreferenciaService prefService = new PreferenciaService(); // AÑADIDO
                 
-                // Y se las "inyecta" al FrmLogin
-                new FrmLogin(estService, carService, hobService, intService).setVisible(true);
+                new FrmLogin(
+                    estService, carService, hobService, intService, 
+                    likeService, matchService, chatService, mensajeService,
+                    prefService // AÑADIDO
+                ).setVisible(true);
             }
         });
     }

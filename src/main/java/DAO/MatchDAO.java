@@ -155,4 +155,22 @@ public class MatchDAO extends GenericDAO<Match, Long> implements IMatchDAO {
             throw new Exception("Error al contar matches por periodo: " + e.getMessage(), e);
         }
     }
+    
+    @Override
+    public Match buscarMatchPorEstudiantes(EntityManager em, Long idEstudiante1, Long idEstudiante2) throws Exception {
+        try {
+            TypedQuery<Match> query = em.createQuery(
+                "SELECT m FROM Match m JOIN m.estudiantes e1 JOIN m.estudiantes e2 " +
+                "WHERE e1.idEstudiante = :id1 AND e2.idEstudiante = :id2", Match.class);
+        
+            query.setParameter("id1", idEstudiante1);
+            query.setParameter("id2", idEstudiante2);
+            query.setMaxResults(1);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null; // No se encontró
+        } catch (Exception e) {
+            throw new Exception("Error al buscar match por estudiantes: " + e.getMessage(), e);
+        }
+    }
 }

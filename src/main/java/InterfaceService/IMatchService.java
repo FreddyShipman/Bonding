@@ -80,4 +80,6 @@ public interface IMatchService {
      * @throws Exception Si ocurre un error
      */
     List<Match> obtenerMatchesRecientes(int limit) throws Exception;
+    
+    Match buscarMatchPorEstudiantes(Long idEstudiante1, Long idEstudiante2) throws Exception;
 }

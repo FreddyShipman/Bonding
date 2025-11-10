@@ -122,4 +122,6 @@ public interface IMatchDAO extends IGenericDAO<Match, Long> {
      * @throws Exception Si ocurre un error durante la consulta
      */
     Long contarMatchesPorPeriodo(EntityManager em, LocalDateTime fechaInicio, LocalDateTime fechaFin) throws Exception;
+    
+    Match buscarMatchPorEstudiantes(EntityManager em, Long idEstudiante1, Long idEstudiante2) throws Exception;
 }

@@ -1,6 +1,11 @@
 package Vistas;
 
-// --- CAMBIO: Imports para TODOS los 9 servicios ---
+/**
+ *
+ * @author alfre
+ */
+
+// --- Imports de Dominio y Servicios ---
 import Domain.Estudiante;
 import Domain.Hobby;
 import Domain.Interes;
@@ -9,28 +14,11 @@ import Domain.Like;
 import Domain.Match;
 import Domain.Chat;
 import Domain.Mensaje;
-import Domain.Preferencia; // AÑADIDO
-import Excepciones.*;
-import Service.CarreraService;
-import Service.EstudianteService;
-import Service.HobbyService;
-import Service.InteresService;
-import Service.LikeService;
-import Service.MatchService; // AÑADIDO
-import Service.ChatService; // AÑADIDO
-import Service.MensajeService; // AÑADIDO
-import Service.PreferenciaService; // AÑADIDO
-import InterfaceService.ICarreraService;
-import InterfaceService.IEstudianteService;
-import InterfaceService.IHobbyService;
-import InterfaceService.IInteresService;
-import InterfaceService.ILikeService;
-import InterfaceService.IMatchService; // AÑADIDO
-import InterfaceService.IChatService; // AÑADIDO
-import InterfaceService.IMensajeService; // AÑADIDO
-import InterfaceService.IPreferenciaService; // AÑADIDO
+import Domain.Preferencia;
+import InterfaceService.*;
+import Service.*; 
 
-// Imports de Java Swing
+// --- Imports de Swing y AWT ---
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -42,17 +30,18 @@ import java.awt.event.FocusEvent;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-import java.time.LocalDateTime; // Para el main de prueba
+import java.time.LocalDateTime;
 
-// Imports para la lógica de FOTOS
+// --- Imports para la lógica de FOTOS ---
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
-import java.awt.image.BufferedImage; // Para la foto circular
+import java.awt.image.BufferedImage;
+import javax.swing.text.JTextComponent; // Para el placeholder
 
-public class FrmCompletarPerfil extends JFrame {
+public class FrmEditarPerfil extends JFrame {
 
     // --- Servicios (LOS 9) ---
     private IEstudianteService estudianteService;
@@ -60,21 +49,27 @@ public class FrmCompletarPerfil extends JFrame {
     private IHobbyService hobbyService;
     private IInteresService interesService;
     private ILikeService likeService;
-    private IMatchService matchService; // AÑADIDO
-    private IChatService chatService; // AÑADIDO
-    private IMensajeService mensajeService; // AÑADIDO
-    private IPreferenciaService preferenciaService; // AÑADIDO
+    private IMatchService matchService;
+    private IChatService chatService;
+    private IMensajeService mensajeService;
+    private IPreferenciaService preferenciaService;
 
     // --- Datos ---
-    private Estudiante estudiante;
+    private Estudiante estudiante; // El estudiante que estamos editando
     private Set<Hobby> hobbiesSet;
     private Set<Interes> interesesSet;
     private String rutaFotoPerfil;
 
     // --- Componentes UI ---
-    private JButton btnSubirFoto, btnFinalizar;
-    private JTextField txtHobby, txtInteres;
-    private JPanel panelHobbiesTags, panelInteresesTags, panelSubirFoto;
+    private JButton btnSubirFoto;
+    private JButton btnGuardar;
+    private JButton btnCancelar;
+    private JTextArea txtBiografia; // AÑADIDO
+    private JTextField txtHobby;
+    private JTextField txtInteres;
+    private JPanel panelHobbiesTags;
+    private JPanel panelInteresesTags;
+    private JPanel panelSubirFoto;
     private JLabel lblFotoPreview;
 
     // --- Colores ---
@@ -85,83 +80,108 @@ public class FrmCompletarPerfil extends JFrame {
     private static final Color COLOR_TAG = new Color(230, 240, 250);
 
     // --- CAMBIO: Constructor recibe los 9 servicios ---
-    public FrmCompletarPerfil(Estudiante estudiante, 
-                              IEstudianteService estudianteService, 
-                              ICarreraService carreraService, 
-                              IHobbyService hobbyService, 
-                              IInteresService interesService,
-                              ILikeService likeService,
-                              IMatchService matchService, // AÑADIDO
-                              IChatService chatService, // AÑADIDO
-                              IMensajeService mensajeService, // AÑADIDO
-                              IPreferenciaService preferenciaService) { // AÑADIDO
+    public FrmEditarPerfil(Estudiante estudiante, 
+                           IEstudianteService estudianteService, 
+                           ICarreraService carreraService, 
+                           IHobbyService hobbyService, 
+                           IInteresService interesService,
+                           ILikeService likeService,
+                           IMatchService matchService,
+                           IChatService chatService,
+                           IMensajeService mensajeService,
+                           IPreferenciaService preferenciaService) {
         
+        this.estudiante = estudiante;
         this.estudianteService = estudianteService;
         this.carreraService = carreraService;
         this.hobbyService = hobbyService;
         this.interesService = interesService;
         this.likeService = likeService;
-        this.matchService = matchService; // AÑADIDO
-        this.chatService = chatService; // AÑADIDO
-        this.mensajeService = mensajeService; // AÑADIDO
-        this.preferenciaService = preferenciaService; // AÑADIDO
+        this.matchService = matchService;
+        this.chatService = chatService;
+        this.mensajeService = mensajeService;
+        this.preferenciaService = preferenciaService;
         
-        this.estudiante = estudiante;
-        this.hobbiesSet = new HashSet<>();
-        this.interesesSet = new HashSet<>();
-        this.rutaFotoPerfil = null;
+        // Inicializar los Sets con los datos existentes
+        this.hobbiesSet = new HashSet<>(estudiante.getHobbies());
+        this.interesesSet = new HashSet<>(estudiante.getIntereses());
+        this.rutaFotoPerfil = estudiante.getFotoPerfil();
         
         initComponentes();
+        
+        // Cargar los datos en la UI
+        cargarDatosExistentes();
     }
 
     private void initComponentes() {
-        // (El código de UI no cambia)
-        setTitle("Registro (Paso 2: Perfil e Intereses)");
+        setTitle("Editar Perfil");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 1000);
         setLocationRelativeTo(null);
+
         JPanel panelPrincipal = new JPanel(new GridBagLayout());
         panelPrincipal.setBackground(COLOR_FONDO_GRIS);
         panelPrincipal.setBorder(new EmptyBorder(20, 20, 20, 20));
+        
         JScrollPane scrollPane = new JScrollPane(panelPrincipal);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
+
         JPanel panelFormulario = new JPanel(new GridBagLayout());
         panelFormulario.setBackground(COLOR_PANEL_BLANCO);
         panelFormulario.setBorder(new EmptyBorder(30, 40, 30, 40));
+        
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 1.0;
         gbc.insets = new Insets(8, 5, 8, 5);
-        JLabel lblPaso = new JLabel("Paso 2 de 2");
-        lblPaso.setFont(new Font("Arial", Font.PLAIN, 12));
-        panelFormulario.add(lblPaso, gbc);
-        gbc.gridy++; gbc.insets = new Insets(2, 5, 20, 5);
-        JProgressBar progressBar = new JProgressBar(0, 2);
-        progressBar.setValue(2); progressBar.setStringPainted(false);
-        panelFormulario.add(progressBar, gbc);
-        gbc.gridy++; gbc.insets = new Insets(10, 5, 5, 5);
-        JLabel lblTitulo = new JLabel("Completa Tu Perfil");
+
+        JLabel lblTitulo = new JLabel("Editar Tu Perfil");
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 30));
         panelFormulario.add(lblTitulo, gbc);
-        gbc.gridy++; gbc.insets = new Insets(0, 5, 25, 5);
-        JLabel lblSubtitulo = new JLabel("¡Deja que los demás sepan quién eres!");
+
+        gbc.gridy++;
+        gbc.insets = new Insets(0, 5, 25, 5);
+        JLabel lblSubtitulo = new JLabel("Actualiza tu foto, biografía, hobbies e intereses.");
         lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 14));
         lblSubtitulo.setForeground(Color.GRAY);
         panelFormulario.add(lblSubtitulo, gbc);
+
         gbc.gridy++; gbc.ipady = 150; 
         panelSubirFoto = crearPanelSubirFoto();
         panelFormulario.add(panelSubirFoto, gbc);
         gbc.ipady = 0;
+
         gbc.gridy++; gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER; gbc.insets = new Insets(10, 5, 5, 5);
-        btnSubirFoto = new JButton("Subir Foto");
+        btnSubirFoto = new JButton("Cambiar Foto");
         btnSubirFoto.setFont(new Font("Arial", Font.PLAIN, 12));
         btnSubirFoto.setFocusPainted(false); btnSubirFoto.setBackground(new Color(235, 235, 235));
         btnSubirFoto.setBorder(new EmptyBorder(5, 15, 5, 15));
         panelFormulario.add(btnSubirFoto, gbc);
+        
+        // --- Campo de Biografía ---
+        gbc.gridy++; gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTH; gbc.insets = new Insets(25, 5, 5, 5);
+        JLabel lblBiografia = new JLabel("Mi Biografía");
+        lblBiografia.setFont(new Font("Arial", Font.BOLD, 16));
+        panelFormulario.add(lblBiografia, gbc);
+        
+        gbc.gridy++; gbc.ipady = 80; // Hacemos el JTextArea más alto
+        txtBiografia = new JTextArea();
+        txtBiografia.setFont(new Font("Arial", Font.PLAIN, 14));
+        txtBiografia.setLineWrap(true);
+        txtBiografia.setWrapStyleWord(true);
+        txtBiografia.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.LIGHT_GRAY),
+            new EmptyBorder(5, 5, 5, 5)
+        ));
+        panelFormulario.add(txtBiografia, gbc);
+        gbc.ipady = 0;
+
+        // Pasatiempos
         gbc.gridy++; gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.NORTH; gbc.insets = new Insets(25, 5, 5, 5);
         JLabel lblHobbies = new JLabel("Mis Pasatiempos");
@@ -175,6 +195,8 @@ public class FrmCompletarPerfil extends JFrame {
         panelHobbiesTags = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         panelHobbiesTags.setBackground(Color.WHITE);
         panelFormulario.add(panelHobbiesTags, gbc);
+
+        // Intereses
         gbc.gridy++; gbc.insets = new Insets(15, 5, 5, 5);
         JLabel lblIntereses = new JLabel("Mis Intereses");
         lblIntereses.setFont(new Font("Arial", Font.BOLD, 16));
@@ -187,25 +209,41 @@ public class FrmCompletarPerfil extends JFrame {
         panelInteresesTags = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         panelInteresesTags.setBackground(Color.WHITE);
         panelFormulario.add(panelInteresesTags, gbc);
+
+        // --- Botón "Guardar" ---
         gbc.gridy++; gbc.ipady = 12; gbc.insets = new Insets(20, 5, 10, 5);
-        btnFinalizar = new JButton("Finalizar Registro");
-        btnFinalizar.setFont(new Font("Arial", Font.BOLD, 14));
-        btnFinalizar.setBackground(COLOR_BOTON); btnFinalizar.setForeground(Color.WHITE);
-        btnFinalizar.setFocusPainted(false); btnFinalizar.setOpaque(true);
-        btnFinalizar.setBorderPainted(false);
-        panelFormulario.add(btnFinalizar, gbc);
+        btnGuardar = new JButton("Guardar Cambios");
+        btnGuardar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnGuardar.setBackground(COLOR_BOTON);
+        btnGuardar.setForeground(Color.WHITE);
+        btnGuardar.setFocusPainted(false); btnGuardar.setOpaque(true);
+        btnGuardar.setBorderPainted(false);
+        panelFormulario.add(btnGuardar, gbc);
+
+        // --- Botón "Cancelar" ---
+        gbc.gridy++;
+        btnCancelar = new JButton("Cancelar");
+        btnCancelar.setFont(new Font("Arial", Font.PLAIN, 14));
+        btnCancelar.setBackground(Color.WHITE);
+        btnCancelar.setFocusPainted(false);
+        panelFormulario.add(btnCancelar, gbc);
+
+        // Relleno
         gbc.gridy++; gbc.weighty = 1.0;
         JPanel spacer = new JPanel(); spacer.setBackground(Color.WHITE);
         panelFormulario.add(spacer, gbc);
         panelPrincipal.add(panelFormulario, new GridBagConstraints());
+
+        // --- Listeners ---
         btnSubirFoto.addActionListener(e -> subirFoto());
         txtHobby.addActionListener(e -> agregarHobby());
         txtInteres.addActionListener(e -> agregarInteres());
-        btnFinalizar.addActionListener(e -> guardarPerfil());
+        btnGuardar.addActionListener(e -> guardarPerfil());
+        btnCancelar.addActionListener(e -> volverAPerfil());
     }
 
     private JPanel crearPanelSubirFoto() {
-        // (Sin cambios)
+        // (Idéntico a FrmCompletarPerfil)
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
         Border dashedBorder = BorderFactory.createDashedBorder(Color.GRAY, 1, 5, 2, false);
@@ -221,7 +259,7 @@ public class FrmCompletarPerfil extends JFrame {
     }
 
     private void subirFoto() {
-        // (Sin cambios - lógica de copia de archivo)
+        // (Idéntico a FrmCompletarPerfil)
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Selecciona una Foto de Perfil");
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (JPG, PNG)", "jpg", "png", "jpeg"));
@@ -257,7 +295,7 @@ public class FrmCompletarPerfil extends JFrame {
     }
 
     private void agregarHobby() {
-        // (Sin cambios)
+        // (Idéntico a FrmCompletarPerfil)
         String nombreHobby = txtHobby.getText().trim();
         if (nombreHobby.isEmpty() || nombreHobby.startsWith("Añade un pasatiempo")) {
             return;
@@ -282,7 +320,7 @@ public class FrmCompletarPerfil extends JFrame {
     }
     
     private void agregarInteres() {
-        // (Sin cambios)
+        // (Idéntico a FrmCompletarPerfil)
         String nombreInteres = txtInteres.getText().trim();
         if (nombreInteres.isEmpty() || nombreInteres.startsWith("Añade un interés")) {
             return;
@@ -307,45 +345,64 @@ public class FrmCompletarPerfil extends JFrame {
         }
     }
 
-    // --- CAMBIO: Navega a FrmExplorar y pasa los 9 servicios ---
-    private void guardarPerfil() {
-        if (this.rutaFotoPerfil == null || this.rutaFotoPerfil.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Por favor, sube una foto de perfil.", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (this.hobbiesSet.isEmpty() || this.interesesSet.isEmpty()) {
-             JOptionPane.showMessageDialog(this, "Añade al menos un pasatiempo e interés.", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
-            return;
+    // --- Carga los datos existentes del Estudiante ---
+    private void cargarDatosExistentes() {
+        // Cargar Foto
+        if (this.rutaFotoPerfil != null && !this.rutaFotoPerfil.isEmpty()) {
+            try {
+                ImageIcon iconoOriginal = new ImageIcon(this.rutaFotoPerfil);
+                Image imagen = iconoOriginal.getImage();
+                Image imagenRedimensionada = imagen.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                lblFotoPreview.setIcon(new ImageIcon(imagenRedimensionada));
+                lblFotoPreview.setText(null);
+            } catch (Exception e) {
+                lblFotoPreview.setText("[Foto no encontrada]");
+            }
         }
         
+        // Cargar Biografía (Asumo que Estudiante tiene get/setBiografia)
+        // if (this.estudiante.getBiografia() != null) {
+        //     txtBiografia.setText(this.estudiante.getBiografia());
+        // } else {
+             addPlaceholder(txtBiografia, "Escribe algo sobre ti...");
+        // }
+
+        // Cargar Hobbies
+        if (this.hobbiesSet != null) {
+            for (Hobby hobby : this.hobbiesSet) {
+                crearTagVisual(hobby, panelHobbiesTags);
+            }
+        }
+        
+        // Cargar Intereses
+        if (this.interesesSet != null) {
+            for (Interes interes : this.interesesSet) {
+                crearTagVisual(interes, panelInteresesTags);
+            }
+        }
+    }
+
+    // --- Lógica de guardado (llama a ACTUALIZAR) ---
+    private void guardarPerfil() {
         try {
             this.estudiante.setFotoPerfil(this.rutaFotoPerfil);
             this.estudiante.setHobbies(this.hobbiesSet);
             this.estudiante.setIntereses(this.interesesSet);
-            // (Aquí también podrías setear una biografía si añades el campo)
+            
+            // Asumo que Estudiante tiene get/setBiografia
+            // if(!txtBiografia.getText().equals("Escribe algo sobre ti...")) {
+            //    this.estudiante.setBiografia(txtBiografia.getText().trim());
+            // }
 
+            // Llama a ACTUALIZAR
             estudianteService.actualizarEstudiante(this.estudiante);
             
             JOptionPane.showMessageDialog(this, 
-                    "¡Perfil completado! Bienvenido, " + this.estudiante.getNombreEstudiante() + ".", 
-                    "Registro Completo", 
+                    "¡Perfil actualizado exitosamente!", 
+                    "Guardado", 
                     JOptionPane.INFORMATION_MESSAGE);
             
-            // Navegación a FrmExplorar
-            FrmExplorar frmExplorar = new FrmExplorar(
-                this.estudiante,
-                this.estudianteService,
-                this.carreraService,
-                this.hobbyService,
-                this.interesService,
-                this.likeService,
-                this.matchService, // AÑADIDO
-                this.chatService, // AÑADIDO
-                this.mensajeService, // AÑADIDO
-                this.preferenciaService // AÑADIDO
-            );
-            frmExplorar.setVisible(true);
-            this.dispose();
+            volverAPerfil(); // Regresa al perfil
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -353,8 +410,25 @@ public class FrmCompletarPerfil extends JFrame {
         }
     }
 
+    // --- Navegación de vuelta a FrmPerfil (pasa 9 servicios) ---
+    private void volverAPerfil() {
+        new FrmPerfil(
+            this.estudiante,
+            this.estudianteService,
+            this.carreraService,
+            this.hobbyService,
+            this.interesService,
+            this.likeService,
+            this.matchService,
+            this.chatService,
+            this.mensajeService,
+            this.preferenciaService // AÑADIDO
+        ).setVisible(true);
+        this.dispose();
+    }
+
     private void crearTagVisual(final Object entidad, final JPanel panelDestino) {
-        // (Sin cambios)
+        // (Idéntico a FrmCompletarPerfil)
         String nombre = (entidad instanceof Hobby) ? ((Hobby) entidad).getNombreHobby() : ((Interes) entidad).getNombreInteres();
         final JPanel tagPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         tagPanel.setBackground(COLOR_TAG);
@@ -386,8 +460,8 @@ public class FrmCompletarPerfil extends JFrame {
         panelDestino.repaint();
     }
     
-    private void addPlaceholder(final JTextField field, final String placeholder) {
-        // (Sin cambios)
+    private void addPlaceholder(final JTextComponent field, final String placeholder) {
+        // (Ajustado para JTextComponent para que funcione con JTextArea)
         field.setText(placeholder);
         field.setForeground(COLOR_PLACEHOLDER);
         field.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -409,38 +483,30 @@ public class FrmCompletarPerfil extends JFrame {
         });
     }
 
-    // --- CAMBIO: 'main' ahora crea e inyecta los 9 servicios ---
+    // --- Main de prueba actualizado a 9 servicios ---
     public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                Estudiante estudiantePrueba = new Estudiante();
-                estudiantePrueba.setNombreEstudiante("UsuarioPrueba");
+        SwingUtilities.invokeLater(() -> {
+            Estudiante estudiantePrueba = new Estudiante();
+            estudiantePrueba.setNombreEstudiante("UsuarioPrueba");
+            estudiantePrueba.setHobbies(new HashSet<>()); 
+            estudiantePrueba.setIntereses(new HashSet<>());
+            
+            IEstudianteService estService = new EstudianteService();
+            ICarreraService carService = new CarreraService();
+            IHobbyService hobService = new HobbyService();
+            IInteresService intService = new InteresService();
+            ILikeService likeService = new LikeService(); 
+            IMatchService matchService = new MatchService();
+            IChatService chatService = new ChatService();
+            IMensajeService mensajeService = new MensajeService();
+            IPreferenciaService prefService = new PreferenciaService();
                 
-                // Creación de los 9 servicios
-                IEstudianteService estService = new EstudianteService();
-                ICarreraService carService = new CarreraService();
-                IHobbyService hobService = new HobbyService();
-                IInteresService intService = new InteresService();
-                ILikeService likeService = new LikeService(); 
-                IMatchService matchService = new MatchService(); // AÑADIDO
-                IChatService chatService = new ChatService(); // AÑADIDO
-                IMensajeService mensajeService = new MensajeService(); // AÑADIDO
-                IPreferenciaService prefService = new PreferenciaService(); // AÑADIDO
-                
-                new FrmCompletarPerfil(
-                    estudiantePrueba, estService, carService, 
-                    hobService, intService, likeService, 
-                    matchService, chatService, mensajeService,
-                    prefService // Inyecta los 9
-                ).setVisible(true);
-            }
+            new FrmEditarPerfil(
+                estudiantePrueba, estService, carService, 
+                hobService, intService, likeService, 
+                matchService, chatService, mensajeService,
+                prefService
+            ).setVisible(true);
         });
     }
 }

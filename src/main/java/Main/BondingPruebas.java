@@ -14,202 +14,202 @@ import java.util.List;
 
 public class BondingPruebas {
 
-    public static void main(String[] args) {
-        // 1. Instanciar los servicios necesarios
-        ICarreraService carreraService = new CarreraService();
-        IEstudianteService estudianteService = new EstudianteService();
-        ILikeService likeService = new LikeService();
-        IMatchService matchService = new MatchService(); // Necesitamos este para verificar
-
-        System.out.println("--- Iniciando Prueba de Likes y Match Mutuo ---");
-
-        Carrera carreraPrueba = null;
-        Estudiante estudianteA = null;
-        Estudiante estudianteB = null;
-
-        try {
-            // --- Preparacion: Asegurar que existe una Carrera ---
-            String nombreCarrera = "Carrera Match Test"; // Usa un nombre especifico
-            carreraPrueba = carreraService.buscarPorNombre(nombreCarrera);
-            if (carreraPrueba == null) {
-                Carrera tempCarrera = new Carrera();
-                tempCarrera.setNombreCarrera(nombreCarrera);
-                carreraPrueba = carreraService.crearCarrera(tempCarrera);
-                System.out.println("Carrera de prueba creada (ID: " + carreraPrueba.getIdCarrera() + ")");
-            } else {
-                 System.out.println("Usando carrera existente (ID: " + carreraPrueba.getIdCarrera() + ")");
-            }
-             System.out.println("-------------------------");
-
-            // --- Preparacion: Crear/Obtener Estudiante A ---
-            String correoA = "estudiante.a.match@potros.itson.edu.mx"; // Correo especifico
-            String passA = "passA";
-            estudianteA = estudianteService.autenticar(correoA, passA);
-            if (estudianteA == null) {
-                Estudiante tempA = new Estudiante();
-                tempA.setNombreEstudiante("EstudianteA");
-                tempA.setApellidoPaterno("MatchTest");
-                tempA.setCorreoInstitucional(correoA);
-                tempA.setContrasena(passA);
-                tempA.setCarrera(carreraPrueba);
-                estudianteA = estudianteService.crearEstudiante(tempA);
-                 System.out.println("Estudiante A creado (ID: " + estudianteA.getIdEstudiante() + ")");
-            } else {
-                System.out.println("Usando Estudiante A existente (ID: " + estudianteA.getIdEstudiante() + ")");
-            }
-
-            // --- Preparacion: Crear/Obtener Estudiante B ---
-             String correoB = "estudiante.b.match@potros.itson.edu.mx"; // Correo especifico
-             String passB = "passB";
-            estudianteB = estudianteService.autenticar(correoB, passB);
-            if (estudianteB == null) {
-                Estudiante tempB = new Estudiante();
-                tempB.setNombreEstudiante("EstudianteB");
-                tempB.setApellidoPaterno("MatchTest");
-                tempB.setCorreoInstitucional(correoB);
-                tempB.setContrasena(passB);
-                tempB.setCarrera(carreraPrueba);
-                estudianteB = estudianteService.crearEstudiante(tempB);
-                 System.out.println("Estudiante B creado (ID: " + estudianteB.getIdEstudiante() + ")");
-            } else {
-                 System.out.println("Usando Estudiante B existente (ID: " + estudianteB.getIdEstudiante() + ")");
-            }
-             System.out.println("-------------------------");
-
-
-            // --- Prueba 1: Crear Like A -> B (si no existe) ---
-            System.out.println("Intentando crear Like: A(" + estudianteA.getIdEstudiante() + ") -> B(" + estudianteB.getIdEstudiante() + ")");
-            Like likeAB = likeService.verificarLikeExistente(estudianteA.getIdEstudiante(), estudianteB.getIdEstudiante());
-            if (likeAB == null) {
-                Like nuevoLikeAB = new Like();
-                // Importante: Asignar los objetos completos, no solo IDs
-                nuevoLikeAB.setEstudianteEmisor(estudianteA);
-                nuevoLikeAB.setEstudianteReceptor(estudianteB);
-                likeAB = likeService.crearLike(nuevoLikeAB);
-                System.out.println(" Like A -> B creado (ID: " + likeAB.getIdLike() + ")");
-            } else {
-                System.out.println(" Like A -> B ya existe (ID: " + likeAB.getIdLike() + ")");
-            }
-             System.out.println("-------------------------");
-
-            // --- Prueba 2: Crear Like B -> A (si no existe, esto deberia disparar la creacion del Match) ---
-             System.out.println("Intentando crear Like: B(" + estudianteB.getIdEstudiante() + ") -> A(" + estudianteA.getIdEstudiante() + ")");
-             Like likeBA = likeService.verificarLikeExistente(estudianteB.getIdEstudiante(), estudianteA.getIdEstudiante());
-             if (likeBA == null) {
-                 Like nuevoLikeBA = new Like();
-                 // Importante: Asignar los objetos completos
-                 nuevoLikeBA.setEstudianteEmisor(estudianteB);
-                 nuevoLikeBA.setEstudianteReceptor(estudianteA);
-                 likeBA = likeService.crearLike(nuevoLikeBA); // Llamada clave que dispara la logica del match
-                 System.out.println(" Like B -> A creado (ID: " + likeBA.getIdLike() + ")");
-                 System.out.println(" --> Se esperaba que esto creara un Match si no existia.");
-             } else {
-                 System.out.println(" Like B -> A ya existe (ID: " + likeBA.getIdLike() + ")");
-                 System.out.println(" --> Si ambos likes ya existian, el Match tambien deberia existir.");
-             }
-              System.out.println("-------------------------");
-
-            // --- Prueba 3: Verificar si el Match se creo ---
-             System.out.println("Verificando si existe Match entre A(" + estudianteA.getIdEstudiante() + ") y B(" + estudianteB.getIdEstudiante() + ")");
-             Match matchEncontrado = matchService.verificarMatchExistente(estudianteA.getIdEstudiante(), estudianteB.getIdEstudiante());
-
-             if (matchEncontrado != null) {
-                 System.out.println("¡EXITO! Match encontrado:");
-                 System.out.println(" Match ID: " + matchEncontrado.getIdMatch());
-                 System.out.println(" Fecha: " + matchEncontrado.getFechaMatch());
-                 // --- Prueba 4: Obtener/Crear Chat para el Match ---
-             Chat chatDelMatch = null;
-             if (matchEncontrado != null) {
-                 System.out.println("Intentando obtener/crear chat para el Match ID: " + matchEncontrado.getIdMatch());
-                 // Instanciar servicios de Chat y Mensaje aqui si no lo hiciste al inicio
-                 IChatService chatService = new ChatService();
-                 IMensajeService mensajeService = new MensajeService();
-
-                 chatDelMatch = matchService.obtenerOCrearChatDelMatch(matchEncontrado.getIdMatch());
-
-                 if (chatDelMatch != null) {
-                     System.out.println("¡EXITO! Chat obtenido/creado:");
-                     System.out.println(" Chat ID: " + chatDelMatch.getIdChat());
-                     System.out.println(" Fecha Creacion: " + chatDelMatch.getFechaCreacion());
-                     System.out.println(" Asociado a Match ID: " + chatDelMatch.getMatch().getIdMatch());
-                 } else {
-                     System.err.println("!!! FALLO: No se pudo obtener/crear el Chat para el Match.");
-                 }
-                 System.out.println("-------------------------");
-
-                 // --- Prueba 5: Enviar Mensajes en el Chat ---
-                 if (chatDelMatch != null) {
-                     System.out.println("Intentando enviar mensajes entre A y B en el Chat ID: " + chatDelMatch.getIdChat());
-
-                     // Mensaje de A para B
-                     Mensaje msgA = new Mensaje();
-                     msgA.setChat(chatDelMatch); // Asocia al chat correcto
-                     msgA.setEstudianteEmisor(estudianteA); // Asigna el objeto Estudiante
-                     msgA.setContenido("Hola B! Soy A.");
-                     Mensaje msgAEnviado = mensajeService.crearMensaje(msgA);
-                     System.out.println(" Mensaje enviado por A (ID: " + msgAEnviado.getIdMensaje() + "): '" + msgAEnviado.getContenido() + "'");
-
-                     // Mensaje de B para A
-                     Mensaje msgB = new Mensaje();
-                     msgB.setChat(chatDelMatch);
-                     msgB.setEstudianteEmisor(estudianteB);
-                     msgB.setContenido("Que tal A? Soy B.");
-                     Mensaje msgBEnviado = mensajeService.crearMensaje(msgB);
-                     System.out.println(" Mensaje enviado por B (ID: " + msgBEnviado.getIdMensaje() + "): '" + msgBEnviado.getContenido() + "'");
-                     System.out.println("-------------------------");
-
-                     // --- Prueba 6: Obtener Mensajes del Chat ---
-                     System.out.println("Intentando obtener los mensajes del Chat ID: " + chatDelMatch.getIdChat());
-                     // Usamos chatService para obtener mensajes
-                     List<Mensaje> mensajes = chatService.obtenerMensajesDelChat(chatDelMatch.getIdChat(), 10); // Pide hasta 10 mensajes
-
-                     if (mensajes != null && !mensajes.isEmpty()) {
-                         System.out.println("¡EXITO! Mensajes encontrados (" + mensajes.size() + "):");
-                         for (Mensaje msg : mensajes) {
-                             System.out.println("  - ID: " + msg.getIdMensaje() +
-                                                ", EmisorID: " + msg.getEstudianteEmisor().getIdEstudiante() +
-                                                ", Fecha: " + msg.getFechaEnvio() +
-                                                ", Contenido: '" + msg.getContenido() + "'");
-                         }
-                         // Verificacion basica
-                         if (mensajes.size() >= 2) { // Deberia haber al menos los 2 que enviamos
-                             System.out.println(" Verificacion: Se recuperaron al menos 2 mensajes.");
-                         } else {
-                             System.err.println("!!! Advertencia: Se esperaban al menos 2 mensajes.");
-                         }
-                     } else {
-                         System.err.println("!!! FALLO: No se encontraron mensajes en el chat.");
-                     }
-                 } else {
-                      System.out.println("Saltando pruebas de mensajes porque no se obtuvo/creo el chat.");
-                 }
-
-             } else {
-                 System.out.println("Saltando pruebas de chat y mensajes porque no se encontro el Match.");
-             }
-             // El ultimo System.out.println("-------------------------"); ya estaba despues de la verificacion del match
-                 // Opcional: Verificar que los estudiantes en el match son A y B
-                 // List<Estudiante> participantes = matchService.obtenerEstudiantesDelMatch(matchEncontrado.getIdMatch());
-                 // boolean aEncontrado = participantes.stream().anyMatch(e -> e.getIdEstudiante().equals(estudianteA.getIdEstudiante()));
-                 // boolean bEncontrado = participantes.stream().anyMatch(e -> e.getIdEstudiante().equals(estudianteB.getIdEstudiante()));
-                 // if (aEncontrado && bEncontrado) System.out.println(" Estudiantes correctos en el match."); else System.err.println("!!! Error: Estudiantes incorrectos en el match.");
-
-             } else {
-                 System.err.println("!!! FALLO: No se encontro el Match esperado entre A y B.");
-             }
-             System.out.println("-------------------------");
-             
-             
-
-        } catch (Exception e) {
-            System.err.println("!!! Ocurrio un error durante la prueba:");
-            e.printStackTrace();
-        } finally {
-            // Cerrar la fabrica de EntityManager al final
-            JpaUtil.getInstance().close();
-            System.out.println("--- Prueba Finalizada ---");
-        }
-    }
+//    public static void main(String[] args) {
+//        // 1. Instanciar los servicios necesarios
+//        ICarreraService carreraService = new CarreraService();
+//        IEstudianteService estudianteService = new EstudianteService();
+//        ILikeService likeService = new LikeService();
+//        IMatchService matchService = new MatchService(); // Necesitamos este para verificar
+//
+//        System.out.println("--- Iniciando Prueba de Likes y Match Mutuo ---");
+//
+//        Carrera carreraPrueba = null;
+//        Estudiante estudianteA = null;
+//        Estudiante estudianteB = null;
+//
+//        try {
+//            // --- Preparacion: Asegurar que existe una Carrera ---
+//            String nombreCarrera = "Carrera Match Test"; // Usa un nombre especifico
+//            carreraPrueba = carreraService.buscarPorNombre(nombreCarrera);
+//            if (carreraPrueba == null) {
+//                Carrera tempCarrera = new Carrera();
+//                tempCarrera.setNombreCarrera(nombreCarrera);
+//                carreraPrueba = carreraService.crearCarrera(tempCarrera);
+//                System.out.println("Carrera de prueba creada (ID: " + carreraPrueba.getIdCarrera() + ")");
+//            } else {
+//                 System.out.println("Usando carrera existente (ID: " + carreraPrueba.getIdCarrera() + ")");
+//            }
+//             System.out.println("-------------------------");
+//
+//            // --- Preparacion: Crear/Obtener Estudiante A ---
+//            String correoA = "estudiante.a.match@potros.itson.edu.mx"; // Correo especifico
+//            String passA = "passA";
+//            estudianteA = estudianteService.autenticar(correoA, passA);
+//            if (estudianteA == null) {
+//                Estudiante tempA = new Estudiante();
+//                tempA.setNombreEstudiante("EstudianteA");
+//                tempA.setApellidoPaterno("MatchTest");
+//                tempA.setCorreoInstitucional(correoA);
+//                tempA.setContrasena(passA);
+//                tempA.setCarrera(carreraPrueba);
+//                estudianteA = estudianteService.crearEstudiante(tempA);
+//                 System.out.println("Estudiante A creado (ID: " + estudianteA.getIdEstudiante() + ")");
+//            } else {
+//                System.out.println("Usando Estudiante A existente (ID: " + estudianteA.getIdEstudiante() + ")");
+//            }
+//
+//            // --- Preparacion: Crear/Obtener Estudiante B ---
+//             String correoB = "estudiante.b.match@potros.itson.edu.mx"; // Correo especifico
+//             String passB = "passB";
+//            estudianteB = estudianteService.autenticar(correoB, passB);
+//            if (estudianteB == null) {
+//                Estudiante tempB = new Estudiante();
+//                tempB.setNombreEstudiante("EstudianteB");
+//                tempB.setApellidoPaterno("MatchTest");
+//                tempB.setCorreoInstitucional(correoB);
+//                tempB.setContrasena(passB);
+//                tempB.setCarrera(carreraPrueba);
+//                estudianteB = estudianteService.crearEstudiante(tempB);
+//                 System.out.println("Estudiante B creado (ID: " + estudianteB.getIdEstudiante() + ")");
+//            } else {
+//                 System.out.println("Usando Estudiante B existente (ID: " + estudianteB.getIdEstudiante() + ")");
+//            }
+//             System.out.println("-------------------------");
+//
+//
+//            // --- Prueba 1: Crear Like A -> B (si no existe) ---
+//            System.out.println("Intentando crear Like: A(" + estudianteA.getIdEstudiante() + ") -> B(" + estudianteB.getIdEstudiante() + ")");
+//            Like likeAB = likeService.verificarLikeExistente(estudianteA.getIdEstudiante(), estudianteB.getIdEstudiante());
+//            if (likeAB == null) {
+//                Like nuevoLikeAB = new Like();
+//                // Importante: Asignar los objetos completos, no solo IDs
+//                nuevoLikeAB.setEstudianteEmisor(estudianteA);
+//                nuevoLikeAB.setEstudianteReceptor(estudianteB);
+//                likeAB = likeService.crearLike(nuevoLikeAB);
+//                System.out.println(" Like A -> B creado (ID: " + likeAB.getIdLike() + ")");
+//            } else {
+//                System.out.println(" Like A -> B ya existe (ID: " + likeAB.getIdLike() + ")");
+//            }
+//             System.out.println("-------------------------");
+//
+//            // --- Prueba 2: Crear Like B -> A (si no existe, esto deberia disparar la creacion del Match) ---
+//             System.out.println("Intentando crear Like: B(" + estudianteB.getIdEstudiante() + ") -> A(" + estudianteA.getIdEstudiante() + ")");
+//             Like likeBA = likeService.verificarLikeExistente(estudianteB.getIdEstudiante(), estudianteA.getIdEstudiante());
+//             if (likeBA == null) {
+//                 Like nuevoLikeBA = new Like();
+//                 // Importante: Asignar los objetos completos
+//                 nuevoLikeBA.setEstudianteEmisor(estudianteB);
+//                 nuevoLikeBA.setEstudianteReceptor(estudianteA);
+//                 likeBA = likeService.crearLike(nuevoLikeBA); // Llamada clave que dispara la logica del match
+//                 System.out.println(" Like B -> A creado (ID: " + likeBA.getIdLike() + ")");
+//                 System.out.println(" --> Se esperaba que esto creara un Match si no existia.");
+//             } else {
+//                 System.out.println(" Like B -> A ya existe (ID: " + likeBA.getIdLike() + ")");
+//                 System.out.println(" --> Si ambos likes ya existian, el Match tambien deberia existir.");
+//             }
+//              System.out.println("-------------------------");
+//
+//            // --- Prueba 3: Verificar si el Match se creo ---
+//             System.out.println("Verificando si existe Match entre A(" + estudianteA.getIdEstudiante() + ") y B(" + estudianteB.getIdEstudiante() + ")");
+//             Match matchEncontrado = matchService.verificarMatchExistente(estudianteA.getIdEstudiante(), estudianteB.getIdEstudiante());
+//
+//             if (matchEncontrado != null) {
+//                 System.out.println("¡EXITO! Match encontrado:");
+//                 System.out.println(" Match ID: " + matchEncontrado.getIdMatch());
+//                 System.out.println(" Fecha: " + matchEncontrado.getFechaMatch());
+//                 // --- Prueba 4: Obtener/Crear Chat para el Match ---
+//             Chat chatDelMatch = null;
+//             if (matchEncontrado != null) {
+//                 System.out.println("Intentando obtener/crear chat para el Match ID: " + matchEncontrado.getIdMatch());
+//                 // Instanciar servicios de Chat y Mensaje aqui si no lo hiciste al inicio
+//                 IChatService chatService = new ChatService();
+//                 IMensajeService mensajeService = new MensajeService();
+//
+//                 chatDelMatch = matchService.obtenerOCrearChatDelMatch(matchEncontrado.getIdMatch());
+//
+//                 if (chatDelMatch != null) {
+//                     System.out.println("¡EXITO! Chat obtenido/creado:");
+//                     System.out.println(" Chat ID: " + chatDelMatch.getIdChat());
+//                     System.out.println(" Fecha Creacion: " + chatDelMatch.getFechaCreacion());
+//                     System.out.println(" Asociado a Match ID: " + chatDelMatch.getMatch().getIdMatch());
+//                 } else {
+//                     System.err.println("!!! FALLO: No se pudo obtener/crear el Chat para el Match.");
+//                 }
+//                 System.out.println("-------------------------");
+//
+//                 // --- Prueba 5: Enviar Mensajes en el Chat ---
+//                 if (chatDelMatch != null) {
+//                     System.out.println("Intentando enviar mensajes entre A y B en el Chat ID: " + chatDelMatch.getIdChat());
+//
+//                     // Mensaje de A para B
+//                     Mensaje msgA = new Mensaje();
+//                     msgA.setChat(chatDelMatch); // Asocia al chat correcto
+//                     msgA.setEstudianteEmisor(estudianteA); // Asigna el objeto Estudiante
+//                     msgA.setContenido("Hola B! Soy A.");
+//                     Mensaje msgAEnviado = mensajeService.crearMensaje(msgA);
+//                     System.out.println(" Mensaje enviado por A (ID: " + msgAEnviado.getIdMensaje() + "): '" + msgAEnviado.getContenido() + "'");
+//
+//                     // Mensaje de B para A
+//                     Mensaje msgB = new Mensaje();
+//                     msgB.setChat(chatDelMatch);
+//                     msgB.setEstudianteEmisor(estudianteB);
+//                     msgB.setContenido("Que tal A? Soy B.");
+//                     Mensaje msgBEnviado = mensajeService.crearMensaje(msgB);
+//                     System.out.println(" Mensaje enviado por B (ID: " + msgBEnviado.getIdMensaje() + "): '" + msgBEnviado.getContenido() + "'");
+//                     System.out.println("-------------------------");
+//
+//                     // --- Prueba 6: Obtener Mensajes del Chat ---
+//                     System.out.println("Intentando obtener los mensajes del Chat ID: " + chatDelMatch.getIdChat());
+//                     // Usamos chatService para obtener mensajes
+//                     List<Mensaje> mensajes = chatService.obtenerMensajesDelChat(chatDelMatch.getIdChat(), 10); // Pide hasta 10 mensajes
+//
+//                     if (mensajes != null && !mensajes.isEmpty()) {
+//                         System.out.println("¡EXITO! Mensajes encontrados (" + mensajes.size() + "):");
+//                         for (Mensaje msg : mensajes) {
+//                             System.out.println("  - ID: " + msg.getIdMensaje() +
+//                                                ", EmisorID: " + msg.getEstudianteEmisor().getIdEstudiante() +
+//                                                ", Fecha: " + msg.getFechaEnvio() +
+//                                                ", Contenido: '" + msg.getContenido() + "'");
+//                         }
+//                         // Verificacion basica
+//                         if (mensajes.size() >= 2) { // Deberia haber al menos los 2 que enviamos
+//                             System.out.println(" Verificacion: Se recuperaron al menos 2 mensajes.");
+//                         } else {
+//                             System.err.println("!!! Advertencia: Se esperaban al menos 2 mensajes.");
+//                         }
+//                     } else {
+//                         System.err.println("!!! FALLO: No se encontraron mensajes en el chat.");
+//                     }
+//                 } else {
+//                      System.out.println("Saltando pruebas de mensajes porque no se obtuvo/creo el chat.");
+//                 }
+//
+//             } else {
+//                 System.out.println("Saltando pruebas de chat y mensajes porque no se encontro el Match.");
+//             }
+//             // El ultimo System.out.println("-------------------------"); ya estaba despues de la verificacion del match
+//                 // Opcional: Verificar que los estudiantes en el match son A y B
+//                 // List<Estudiante> participantes = matchService.obtenerEstudiantesDelMatch(matchEncontrado.getIdMatch());
+//                 // boolean aEncontrado = participantes.stream().anyMatch(e -> e.getIdEstudiante().equals(estudianteA.getIdEstudiante()));
+//                 // boolean bEncontrado = participantes.stream().anyMatch(e -> e.getIdEstudiante().equals(estudianteB.getIdEstudiante()));
+//                 // if (aEncontrado && bEncontrado) System.out.println(" Estudiantes correctos en el match."); else System.err.println("!!! Error: Estudiantes incorrectos en el match.");
+//
+//             } else {
+//                 System.err.println("!!! FALLO: No se encontro el Match esperado entre A y B.");
+//             }
+//             System.out.println("-------------------------");
+//             
+//             
+//
+//        } catch (Exception e) {
+//            System.err.println("!!! Ocurrio un error durante la prueba:");
+//            e.printStackTrace();
+//        } finally {
+//            // Cerrar la fabrica de EntityManager al final
+//            JpaUtil.getInstance().close();
+//            System.out.println("--- Prueba Finalizada ---");
+//        }
+//    }
 }
 
 //public class BondingPruebas {

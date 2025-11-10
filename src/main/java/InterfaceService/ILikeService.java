@@ -30,7 +30,7 @@ public interface ILikeService {
      * @return El Like creado
      * @throws Exception Si falla la validacion o la persistencia
      */
-    Like crearLike(Like like) throws Exception;
+    boolean crearLike(Like like) throws Exception;
 
     /**
      * Elimina un 'Like' (ej. "unlike").

@@ -1,11 +1,14 @@
 package Service;
 
 import Config.JpaUtil;
+import DAO.ChatDAO;
 import DAO.LikeDAO;
 import DAO.MatchDAO;
+import Domain.Chat;
 import Domain.Estudiante;
 import Domain.Like;
 import Domain.Match;
+import InterfaceDAO.IChatDAO;
 import InterfaceDAO.ILikeDAO;
 import InterfaceDAO.IMatchDAO;
 import InterfaceService.ILikeService;
@@ -23,14 +26,16 @@ public class LikeService implements ILikeService {
 
     private ILikeDAO likeDAO;
     private IMatchDAO matchDAO;
+    private IChatDAO chatDAO;
 
     public LikeService() {
         this.likeDAO = new LikeDAO();
         this.matchDAO = new MatchDAO();
+        this.chatDAO = new ChatDAO();
     }
 
     @Override
-    public Like crearLike(Like like) throws Exception {
+    public boolean crearLike(Like like) throws Exception {
         EntityManager em = null;
         try {
             if (like == null || like.getEstudianteEmisor() == null || like.getEstudianteReceptor() == null) {
@@ -70,11 +75,15 @@ public class LikeService implements ILikeService {
                     nuevoMatch.setEstudiantes(Set.of(emisor, receptor));
                     
                     this.matchDAO.crear(em, nuevoMatch);
+                    
+                    Chat nuevoChat = new Chat();
+                    nuevoChat.setFechaCreacion(LocalDateTime.now());
+                    nuevoChat.setMatch(nuevoMatch);
+                    this.chatDAO.crear(em, nuevoChat);
                 }
             }
-
             em.getTransaction().commit();
-            return like;
+            return hayMatchMutuo;
 
         } catch (Exception e) {
             if (em != null && em.getTransaction().isActive()) {
