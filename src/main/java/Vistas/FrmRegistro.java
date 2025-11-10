@@ -347,7 +347,7 @@ public class FrmRegistro extends JFrame {
             // Error de validación
             String mensaje = e.getMessage();
             if (e.getCampo() != null && e.getCampo().equals("correoInstitucional")) {
-                mensaje += "\nAsegúrate de usar tu correo institucional @itson.edu.mx";
+                mensaje += "\nAsegúrate de usar tu correo institucional @potros.itson.edu.mx";
             }
             mostrarError(mensaje, "Error de Validación");
 
@@ -387,27 +387,27 @@ public class FrmRegistro extends JFrame {
     private void validarCorreoEnTiempoReal() {
         String email = txtEmail.getText();
 
-        if (email.isEmpty() || email.equals("usuario@itson.edu.mx")) {
+        if (email.isEmpty() || email.equals("usuario@potros.itson.edu.mx")) {
             lblErrorEmail.setText(" ");
             txtEmail.setBorder(new JTextField().getBorder());
             return;
         }
 
         if (!email.contains("@")) {
-            lblErrorEmail.setText("✗ Formato inválido");
+            lblErrorEmail.setText("Formato inválido");
             lblErrorEmail.setForeground(Color.RED);
             txtEmail.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
             return;
         }
 
-        if (!email.toLowerCase().endsWith("@itson.edu.mx")) {
-            lblErrorEmail.setText("⚠ Debe terminar en @itson.edu.mx");
+        if (!email.toLowerCase().endsWith("@potros.itson.edu.mx")) {
+            lblErrorEmail.setText("Debe terminar en @potros.itson.edu.mx");
             lblErrorEmail.setForeground(new Color(255, 140, 0));
             txtEmail.setBorder(BorderFactory.createLineBorder(new Color(255, 140, 0), 1));
             return;
         }
 
-        lblErrorEmail.setText("✓ Correo válido");
+        lblErrorEmail.setText("Correo válido");
         lblErrorEmail.setForeground(new Color(0, 128, 0));
         txtEmail.setBorder(BorderFactory.createLineBorder(new Color(0, 128, 0), 1));
     }
@@ -427,15 +427,15 @@ public class FrmRegistro extends JFrame {
         int fuerza = calcularFuerzaPassword(pass);
 
         if (fuerza < 2) {
-            lblFuerzaPassword.setText("✗ Débil (mínimo 6 caracteres)");
+            lblFuerzaPassword.setText("Débil (mínimo 6 caracteres)");
             lblFuerzaPassword.setForeground(Color.RED);
             txtPassword.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
         } else if (fuerza < 3) {
-            lblFuerzaPassword.setText("⚠ Media (agrega números o símbolos)");
+            lblFuerzaPassword.setText("Media (agrega números o símbolos)");
             lblFuerzaPassword.setForeground(new Color(255, 140, 0));
             txtPassword.setBorder(BorderFactory.createLineBorder(new Color(255, 140, 0), 1));
         } else {
-            lblFuerzaPassword.setText("✓ Fuerte");
+            lblFuerzaPassword.setText("Fuerte");
             lblFuerzaPassword.setForeground(new Color(0, 128, 0));
             txtPassword.setBorder(BorderFactory.createLineBorder(new Color(0, 128, 0), 1));
         }

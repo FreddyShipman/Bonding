@@ -92,7 +92,7 @@ public class BondingPruebasExtendidas {
         matchService = new MatchService();
         chatService = new ChatService();
         mensajeService = new MensajeService();
-        System.out.println("[INICIALIZACIÓN] ✓ Servicios creados correctamente");
+        System.out.println("[INICIALIZACIÓN] Servicios creados correctamente");
     }
 
     // ===============================
@@ -141,9 +141,9 @@ public class BondingPruebasExtendidas {
         // Crear Estudiantes
         System.out.println("\n[ESTUDIANTE - CREAR] Creando estudiantes de prueba...");
 
-        estudiante1 = crearEstudiantePrueba("test1.pruebas@itson.edu.mx", "Juan", "Pérez", "López");
-        estudiante2 = crearEstudiantePrueba("test2.pruebas@itson.edu.mx", "María", "González", "Martínez");
-        estudiante3 = crearEstudiantePrueba("test3.pruebas@itson.edu.mx", "Carlos", "Ramírez", "Sánchez");
+        estudiante1 = crearEstudiantePrueba("test1.pruebas@potros.itson.edu.mx", "Juan", "Pérez", "López");
+        estudiante2 = crearEstudiantePrueba("test2.pruebas@potros.itson.edu.mx", "María", "González", "Martínez");
+        estudiante3 = crearEstudiantePrueba("test3.pruebas@potros.itson.edu.mx", "Carlos", "Ramírez", "Sánchez");
 
         // Buscar Estudiante por ID
         System.out.println("\n[ESTUDIANTE - BUSCAR] Buscando estudiante por ID...");
@@ -158,7 +158,7 @@ public class BondingPruebasExtendidas {
 
         // Autenticar
         System.out.println("\n[ESTUDIANTE - AUTENTICAR] Autenticando estudiante...");
-        Estudiante autenticado = estudianteService.autenticar("test1.pruebas@itson.edu.mx", "pass123");
+        Estudiante autenticado = estudianteService.autenticar("test1.pruebas@potros.itson.edu.mx", "pass123");
         System.out.println("[ESTUDIANTE - AUTENTICAR] ✓ Autenticación exitosa: " + autenticado.getNombreEstudiante());
 
         // Listar Estudiantes

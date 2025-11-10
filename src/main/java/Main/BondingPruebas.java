@@ -42,7 +42,7 @@ public class BondingPruebas {
              System.out.println("-------------------------");
 
             // --- Preparacion: Crear/Obtener Estudiante A ---
-            String correoA = "estudiante.a.match@itson.edu.mx"; // Correo especifico
+            String correoA = "estudiante.a.match@potros.itson.edu.mx"; // Correo especifico
             String passA = "passA";
             estudianteA = estudianteService.autenticar(correoA, passA);
             if (estudianteA == null) {
@@ -59,7 +59,7 @@ public class BondingPruebas {
             }
 
             // --- Preparacion: Crear/Obtener Estudiante B ---
-             String correoB = "estudiante.b.match@itson.edu.mx"; // Correo especifico
+             String correoB = "estudiante.b.match@potros.itson.edu.mx"; // Correo especifico
              String passB = "passB";
             estudianteB = estudianteService.autenticar(correoB, passB);
             if (estudianteB == null) {
@@ -242,7 +242,7 @@ public class BondingPruebas {
 //             System.out.println("-------------------------");
 //
 //            // --- Preparacion: Crear/Obtener Estudiante A ---
-//            String correoA = "estudiante.a.match@itson.edu.mx";
+//            String correoA = "estudiante.a.match@potros.itson.edu.mx";
 //            estudianteA = estudianteService.autenticar(correoA, "passA");
 //            if (estudianteA == null) {
 //                Estudiante tempA = new Estudiante();
@@ -258,7 +258,7 @@ public class BondingPruebas {
 //            }
 //
 //            // --- Preparacion: Crear/Obtener Estudiante B ---
-//             String correoB = "estudiante.b.match@itson.edu.mx";
+//             String correoB = "estudiante.b.match@potros.itson.edu.mx";
 //            estudianteB = estudianteService.autenticar(correoB, "passB");
 //            if (estudianteB == null) {
 //                Estudiante tempB = new Estudiante();

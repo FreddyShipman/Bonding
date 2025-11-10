@@ -126,7 +126,7 @@ public class FrmLogin extends JFrame {
         txtEmail.setFont(new Font("Arial", Font.PLAIN, 14));
         gbc.ipady = 10;
         gbc.insets = new Insets(5, 0, 0, 0);
-        addPlaceholder(txtEmail, "username@itson.edu.mx");
+        addPlaceholder(txtEmail, "username@potros.itson.edu.mx");
         // Validación en tiempo real del correo
         txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -270,7 +270,7 @@ public class FrmLogin extends JFrame {
         String password = new String(txtPassword.getPassword());
 
         // Validar placeholders y campos vacíos
-        if (email.equals("username@itson.edu.mx") || email.isEmpty() ||
+        if (email.equals("username@potros.itson.edu.mx") || email.isEmpty() ||
             password.equals("Ingresa tu contraseña") || password.isEmpty()) {
             mostrarError("Por favor, ingresa tu correo y contraseña.", "Campos Vacíos");
             return;
@@ -285,7 +285,6 @@ public class FrmLogin extends JFrame {
                 "Inicio de Sesión Exitoso",
                 JOptionPane.INFORMATION_MESSAGE);
 
-            // --- PROXIMO PASO: Abrir la pantalla principal ---
             // FrmPrincipal frmPrincipal = new FrmPrincipal(estudianteLogueado, estudianteService, carreraService, hobbyService, interesService);
             // frmPrincipal.setVisible(true);
             this.dispose();
@@ -339,7 +338,7 @@ public class FrmLogin extends JFrame {
         String email = txtEmail.getText();
 
         // Si está vacío o es el placeholder, no mostrar error
-        if (email.isEmpty() || email.equals("username@itson.edu.mx")) {
+        if (email.isEmpty() || email.equals("username@potros.itson.edu.mx")) {
             lblErrorEmail.setText(" ");
             txtEmail.setBorder(new JTextField().getBorder());
             return;
@@ -347,20 +346,20 @@ public class FrmLogin extends JFrame {
 
         // Validar formato básico de correo
         if (!email.contains("@")) {
-            lblErrorEmail.setText("✗ Formato de correo inválido");
+            lblErrorEmail.setText("Formato de correo inválido");
             txtEmail.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
             return;
         }
 
         // Validar que sea correo institucional
-        if (!email.toLowerCase().endsWith("@itson.edu.mx")) {
-            lblErrorEmail.setText("⚠ Debe ser correo institucional (@itson.edu.mx)");
+        if (!email.toLowerCase().endsWith("@potros.itson.edu.mx")) {
+            lblErrorEmail.setText("Debe ser correo institucional (@potros.itson.edu.mx)");
             txtEmail.setBorder(BorderFactory.createLineBorder(new Color(255, 140, 0), 1));
             return;
         }
 
         // Correo válido
-        lblErrorEmail.setText("✓ Correo válido");
+        lblErrorEmail.setText("Correo válido");
         lblErrorEmail.setForeground(new Color(0, 128, 0));
         txtEmail.setBorder(BorderFactory.createLineBorder(new Color(0, 128, 0), 1));
     }

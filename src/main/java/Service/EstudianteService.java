@@ -41,8 +41,8 @@ public class EstudianteService implements IEstudianteService {
             }
 
             // Validar formato de correo institucional
-            if (!estudiante.getCorreoInstitucional().toLowerCase().endsWith("@itson.edu.mx")) {
-                throw new ValidacionException("El correo debe ser institucional (@itson.edu.mx)", "correoInstitucional");
+            if (!estudiante.getCorreoInstitucional().toLowerCase().endsWith("@potros.itson.edu.mx")) {
+                throw new ValidacionException("El correo debe ser institucional (@potros.itson.edu.mx)", "correoInstitucional");
             }
 
             em = JpaUtil.getInstance().getEntityManager();

@@ -76,13 +76,13 @@ public class Bonding{
                 } catch (Exception e) {
                     // Check if it failed because it already exists
                     if (e.getMessage().contains("ya esta registrado")) {
-                         System.out.println(" Estudiante ya existe: estudiante" + i + "@itson.edu.mx");
+                         System.out.println(" Estudiante ya existe: estudiante" + i + "@potros.itson.edu.mx");
                          // Try to fetch the existing one to add to the list for later use
                          try {
-                              Estudiante existente = estudianteService.autenticar("estudiante" + i + "@itson.edu.mx", "pass" + i);
+                              Estudiante existente = estudianteService.autenticar("estudiante" + i + "@potros.itson.edu.mx", "pass" + i);
                               if(existente != null) estudiantes.add(existente);
                          } catch (Exception fetchErr) {
-                              System.err.println(" No se pudo recuperar estudiante existente: estudiante" + i + "@itson.edu.mx");
+                              System.err.println(" No se pudo recuperar estudiante existente: estudiante" + i + "@potros.itson.edu.mx");
                          }
                     } else {
                         System.err.println(" Error creando estudiante " + i + ": " + e.getMessage());
