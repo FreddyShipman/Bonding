@@ -5,7 +5,7 @@ package Vistas;
  * @author alfre
  */
 
-// --- Imports de Dominio y Servicios ---
+// --- CAMBIO: Imports para TODOS los 9 servicios ---
 import Domain.Estudiante;
 import Domain.Hobby;
 import Domain.Interes;
@@ -14,14 +14,32 @@ import Domain.Like;
 import Domain.Match;
 import Domain.Chat;
 import Domain.Mensaje;
-import Domain.Preferencia;
-import InterfaceService.*;
-import Service.*; 
+import Domain.Preferencia; // AÑADIDO
+import Excepciones.*;
+import Service.CarreraService;
+import Service.EstudianteService;
+import Service.HobbyService;
+import Service.InteresService;
+import Service.LikeService;
+import Service.MatchService; // AÑADIDO
+import Service.ChatService; // AÑADIDO
+import Service.MensajeService; // AÑADIDO
+import Service.PreferenciaService; // AÑADIDO
+import InterfaceService.ICarreraService;
+import InterfaceService.IEstudianteService;
+import InterfaceService.IHobbyService;
+import InterfaceService.IInteresService;
+import InterfaceService.ILikeService;
+import InterfaceService.IMatchService; // AÑADIDO
+import InterfaceService.IChatService; // AÑADIDO
+import InterfaceService.IMensajeService; // AÑADIDO
+import InterfaceService.IPreferenciaService; // AÑADIDO
 
-// --- Imports de Swing y AWT ---
+// Imports de Java Swing
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent; // Para el placeholder
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,16 +48,15 @@ import java.awt.event.FocusEvent;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-import java.time.LocalDateTime;
+import java.time.LocalDateTime; // Para el main de prueba
 
-// --- Imports para la lógica de FOTOS ---
+// Imports para la lógica de FOTOS
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.awt.image.BufferedImage;
-import javax.swing.text.JTextComponent; // Para el placeholder
 
 public class FrmEditarPerfil extends JFrame {
 
@@ -169,7 +186,7 @@ public class FrmEditarPerfil extends JFrame {
         lblBiografia.setFont(new Font("Arial", Font.BOLD, 16));
         panelFormulario.add(lblBiografia, gbc);
         
-        gbc.gridy++; gbc.ipady = 80; // Hacemos el JTextArea más alto
+        gbc.gridy++; gbc.ipady = 80;
         txtBiografia = new JTextArea();
         txtBiografia.setFont(new Font("Arial", Font.PLAIN, 14));
         txtBiografia.setLineWrap(true);
@@ -243,7 +260,6 @@ public class FrmEditarPerfil extends JFrame {
     }
 
     private JPanel crearPanelSubirFoto() {
-        // (Idéntico a FrmCompletarPerfil)
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
         Border dashedBorder = BorderFactory.createDashedBorder(Color.GRAY, 1, 5, 2, false);
@@ -259,7 +275,6 @@ public class FrmEditarPerfil extends JFrame {
     }
 
     private void subirFoto() {
-        // (Idéntico a FrmCompletarPerfil)
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Selecciona una Foto de Perfil");
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (JPG, PNG)", "jpg", "png", "jpeg"));
@@ -295,7 +310,6 @@ public class FrmEditarPerfil extends JFrame {
     }
 
     private void agregarHobby() {
-        // (Idéntico a FrmCompletarPerfil)
         String nombreHobby = txtHobby.getText().trim();
         if (nombreHobby.isEmpty() || nombreHobby.startsWith("Añade un pasatiempo")) {
             return;
@@ -320,7 +334,6 @@ public class FrmEditarPerfil extends JFrame {
     }
     
     private void agregarInteres() {
-        // (Idéntico a FrmCompletarPerfil)
         String nombreInteres = txtInteres.getText().trim();
         if (nombreInteres.isEmpty() || nombreInteres.startsWith("Añade un interés")) {
             return;
@@ -345,7 +358,6 @@ public class FrmEditarPerfil extends JFrame {
         }
     }
 
-    // --- Carga los datos existentes del Estudiante ---
     private void cargarDatosExistentes() {
         // Cargar Foto
         if (this.rutaFotoPerfil != null && !this.rutaFotoPerfil.isEmpty()) {
@@ -361,8 +373,10 @@ public class FrmEditarPerfil extends JFrame {
         }
         
         // Cargar Biografía (Asumo que Estudiante tiene get/setBiografia)
-        // if (this.estudiante.getBiografia() != null) {
-        //     txtBiografia.setText(this.estudiante.getBiografia());
+        // String biografia = this.estudiante.getBiografia();
+        // if (biografia != null && !biografia.isEmpty()) {
+        //     txtBiografia.setText(biografia);
+        //     txtBiografia.setForeground(Color.BLACK);
         // } else {
              addPlaceholder(txtBiografia, "Escribe algo sobre ti...");
         // }
@@ -382,7 +396,6 @@ public class FrmEditarPerfil extends JFrame {
         }
     }
 
-    // --- Lógica de guardado (llama a ACTUALIZAR) ---
     private void guardarPerfil() {
         try {
             this.estudiante.setFotoPerfil(this.rutaFotoPerfil);
@@ -394,7 +407,6 @@ public class FrmEditarPerfil extends JFrame {
             //    this.estudiante.setBiografia(txtBiografia.getText().trim());
             // }
 
-            // Llama a ACTUALIZAR
             estudianteService.actualizarEstudiante(this.estudiante);
             
             JOptionPane.showMessageDialog(this, 
@@ -402,7 +414,7 @@ public class FrmEditarPerfil extends JFrame {
                     "Guardado", 
                     JOptionPane.INFORMATION_MESSAGE);
             
-            volverAPerfil(); // Regresa al perfil
+            volverAPerfil(); 
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -410,7 +422,7 @@ public class FrmEditarPerfil extends JFrame {
         }
     }
 
-    // --- Navegación de vuelta a FrmPerfil (pasa 9 servicios) ---
+    // --- CAMBIO: Navegación de vuelta a FrmPerfil (pasa 9 servicios) ---
     private void volverAPerfil() {
         new FrmPerfil(
             this.estudiante,
@@ -428,7 +440,6 @@ public class FrmEditarPerfil extends JFrame {
     }
 
     private void crearTagVisual(final Object entidad, final JPanel panelDestino) {
-        // (Idéntico a FrmCompletarPerfil)
         String nombre = (entidad instanceof Hobby) ? ((Hobby) entidad).getNombreHobby() : ((Interes) entidad).getNombreInteres();
         final JPanel tagPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         tagPanel.setBackground(COLOR_TAG);
@@ -461,7 +472,6 @@ public class FrmEditarPerfil extends JFrame {
     }
     
     private void addPlaceholder(final JTextComponent field, final String placeholder) {
-        // (Ajustado para JTextComponent para que funcione con JTextArea)
         field.setText(placeholder);
         field.setForeground(COLOR_PLACEHOLDER);
         field.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -483,7 +493,7 @@ public class FrmEditarPerfil extends JFrame {
         });
     }
 
-    // --- Main de prueba actualizado a 9 servicios ---
+    // --- CAMBIO: Main de prueba actualizado a 9 servicios ---
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Estudiante estudiantePrueba = new Estudiante();
