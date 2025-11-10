@@ -163,9 +163,20 @@ public class FrmRegistro extends JFrame {
         panel.add(txtApellidoMaterno, gbc);
         gbc.gridy++; gbc.ipady = 0; gbc.insets = new Insets(5, 0, 0, 0);
         panel.add(new JLabel("Correo Institucional"), gbc);
-        gbc.gridy++; gbc.ipady = 10; gbc.insets = new Insets(0, 0, 10, 0);
+        gbc.gridy++; gbc.ipady = 10; gbc.insets = new Insets(0, 0, 0, 0);
         txtEmail = new JTextField(); addPlaceholder(txtEmail, "tu.id@potros.itson.edu.mx");
+        // Validación en tiempo real del correo
+        txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                validarCorreoEnTiempoReal();
+            }
+        });
         panel.add(txtEmail, gbc);
+        // Label de error para email
+        gbc.gridy++; gbc.ipady = 0; gbc.insets = new Insets(2, 0, 8, 0);
+        lblErrorEmail = new JLabel(" ");
+        lblErrorEmail.setFont(new Font("Arial", Font.PLAIN, 11));
+        panel.add(lblErrorEmail, gbc);
         gbc.gridy++; gbc.ipady = 0; gbc.insets = new Insets(5, 0, 0, 0);
         panel.add(new JLabel("Nivel"), gbc);
         gbc.gridy++; gbc.ipady = 10; gbc.insets = new Insets(0, 0, 10, 0);
@@ -387,7 +398,7 @@ public class FrmRegistro extends JFrame {
     private void validarCorreoEnTiempoReal() {
         String email = txtEmail.getText();
 
-        if (email.isEmpty() || email.equals("usuario@potros.itson.edu.mx")) {
+        if (email.isEmpty() || email.equals("tu.id@potros.itson.edu.mx")) {
             lblErrorEmail.setText(" ");
             txtEmail.setBorder(new JTextField().getBorder());
             return;

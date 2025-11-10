@@ -126,7 +126,7 @@ public class FrmLogin extends JFrame {
         txtEmail.setFont(new Font("Arial", Font.PLAIN, 14));
         gbc.ipady = 10;
         gbc.insets = new Insets(5, 0, 0, 0);
-        addPlaceholder(txtEmail, "username@potros.itson.edu.mx");
+        addPlaceholder(txtEmail, "tu.id@potros.itson.edu.mx");
         // Validación en tiempo real del correo
         txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -270,7 +270,7 @@ public class FrmLogin extends JFrame {
         String password = new String(txtPassword.getPassword());
 
         // Validar placeholders y campos vacíos
-        if (email.equals("username@potros.itson.edu.mx") || email.isEmpty() ||
+        if (email.equals("tu.id@potros.itson.edu.mx") || email.isEmpty() ||
             password.equals("Ingresa tu contraseña") || password.isEmpty()) {
             mostrarError("Por favor, ingresa tu correo y contraseña.", "Campos Vacíos");
             return;
@@ -338,7 +338,7 @@ public class FrmLogin extends JFrame {
         String email = txtEmail.getText();
 
         // Si está vacío o es el placeholder, no mostrar error
-        if (email.isEmpty() || email.equals("username@potros.itson.edu.mx")) {
+        if (email.isEmpty() || email.equals("tu.id@potros.itson.edu.mx")) {
             lblErrorEmail.setText(" ");
             txtEmail.setBorder(new JTextField().getBorder());
             return;
