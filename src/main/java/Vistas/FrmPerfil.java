@@ -332,11 +332,10 @@ public class FrmPerfil extends JFrame {
         return tag;
     }
 
-    private void cargarFoto(JLabel label, String rutaFoto, int tamano, boolean circular) {
-        // (Sin cambios)
-        if (rutaFoto != null && !rutaFoto.isEmpty()) {
+    private void cargarFoto(JLabel label, byte[] fotoBytes, int tamano, boolean circular) {
+        if (fotoBytes != null && fotoBytes.length > 0) {
             try {
-                ImageIcon icono = new ImageIcon(rutaFoto);
+                ImageIcon icono = new ImageIcon(fotoBytes);
                 Image img = icono.getImage().getScaledInstance(tamano, tamano, Image.SCALE_SMOOTH);
                 if (circular) {
                     BufferedImage imgCircular = new BufferedImage(tamano, tamano, BufferedImage.TYPE_INT_ARGB);
@@ -351,7 +350,7 @@ public class FrmPerfil extends JFrame {
                 }
                 label.setText(null);
             } catch (Exception e) { label.setText("[Foto]"); }
-        } else { label.setText("[Foto]"); }
+        } else { label.setText("[Sin Foto]"); }
     }
 
     private void editarPerfil() {

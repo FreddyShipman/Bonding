@@ -75,7 +75,7 @@ public class FrmEditarPerfil extends JFrame {
     private Estudiante estudiante; // El estudiante que estamos editando
     private Set<Hobby> hobbiesSet;
     private Set<Interes> interesesSet;
-    private String rutaFotoPerfil;
+    private byte[] rutaFotoPerfil;
 
     // --- Componentes UI ---
     private JButton btnSubirFoto;
@@ -307,19 +307,10 @@ public class FrmEditarPerfil extends JFrame {
         if (result == JFileChooser.APPROVE_OPTION) {
             File archivoSeleccionado = fileChooser.getSelectedFile();
             try {
-                String uploadDir = "user_uploads/fotos_perfil/";
-                new File(uploadDir).mkdirs(); 
-                String extension = "";
-                String nombreArchivo = archivoSeleccionado.getName();
-                int i = nombreArchivo.lastIndexOf('.');
-                if (i > 0) {
-                    extension = nombreArchivo.substring(i + 1);
-                }
-                String uniqueFileName = UUID.randomUUID().toString() + "." + extension;
-                Path sourcePath = archivoSeleccionado.toPath();
-                Path destPath = Paths.get(uploadDir + uniqueFileName);
-                Files.copy(sourcePath, destPath, StandardCopyOption.REPLACE_EXISTING);
-                this.rutaFotoPerfil = destPath.toString(); 
+                // Leer el archivo como byte[]
+                this.rutaFotoPerfil = Files.readAllBytes(archivoSeleccionado.toPath());
+
+                // Mostrar preview
                 ImageIcon iconoOriginal = new ImageIcon(this.rutaFotoPerfil);
                 Image imagen = iconoOriginal.getImage();
                 Image imagenRedimensionada = imagen.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
@@ -328,7 +319,7 @@ public class FrmEditarPerfil extends JFrame {
                 btnSubirFoto.setText("Cambiar Foto");
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error al guardar o cargar la imagen.", "Error de Archivo", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al cargar la imagen.", "Error de Archivo", JOptionPane.ERROR_MESSAGE);
                 this.rutaFotoPerfil = null;
             }
         }
@@ -385,7 +376,7 @@ public class FrmEditarPerfil extends JFrame {
 
     private void cargarDatosExistentes() {
         // Cargar Foto
-        if (this.rutaFotoPerfil != null && !this.rutaFotoPerfil.isEmpty()) {
+        if (this.rutaFotoPerfil != null && this.rutaFotoPerfil.length > 0) {
             try {
                 ImageIcon iconoOriginal = new ImageIcon(this.rutaFotoPerfil);
                 Image imagen = iconoOriginal.getImage();

@@ -6,6 +6,7 @@ import Domain.Estudiante;
 import Domain.Hobby;
 import Domain.Interes;
 import Domain.Preferencia;
+import Utils.ImagenUtils;
 import jakarta.persistence.EntityManager;
 import java.util.HashSet;
 import java.util.List;
@@ -202,7 +203,7 @@ public class InicializarBaseDatos {
             maria.setGenero("Mujer");
             maria.setEdad(20);
             maria.setCarrera(carreras.get(0)); // Ing. Software
-            maria.setFotoPerfil("user_uploads/fotos_perfil/default_mujer1.jpg");
+            maria.setFotoPerfil(ImagenUtils.generarImagenConIniciales("María", "García", 200));
             Set<Hobby> hobbiesMaria = new HashSet<>();
             hobbiesMaria.add(hobbies.get(0)); // Gaming
             hobbiesMaria.add(hobbies.get(1)); // Programación
@@ -225,7 +226,7 @@ public class InicializarBaseDatos {
             carlos.setGenero("Hombre");
             carlos.setEdad(22);
             carlos.setCarrera(carreras.get(1)); // Ing. Sistemas
-            carlos.setFotoPerfil("user_uploads/fotos_perfil/default_hombre1.jpg");
+            carlos.setFotoPerfil(ImagenUtils.generarImagenConIniciales("Carlos", "López", 200));
             Set<Hobby> hobbiesCarlos = new HashSet<>();
             hobbiesCarlos.add(hobbies.get(3)); // Deportes
             hobbiesCarlos.add(hobbies.get(0)); // Gaming
@@ -248,7 +249,7 @@ public class InicializarBaseDatos {
             ana.setGenero("Mujer");
             ana.setEdad(21);
             ana.setCarrera(carreras.get(6)); // Lic. Psicología
-            ana.setFotoPerfil("user_uploads/fotos_perfil/default_mujer2.jpg");
+            ana.setFotoPerfil(ImagenUtils.generarImagenConIniciales("Ana", "Martínez", 200));
             Set<Hobby> hobbiesAna = new HashSet<>();
             hobbiesAna.add(hobbies.get(2)); // Lectura
             hobbiesAna.add(hobbies.get(11)); // Yoga
@@ -271,7 +272,7 @@ public class InicializarBaseDatos {
             luis.setGenero("Hombre");
             luis.setEdad(23);
             luis.setCarrera(carreras.get(3)); // Ing. Industrial
-            luis.setFotoPerfil("user_uploads/fotos_perfil/default_hombre2.jpg");
+            luis.setFotoPerfil(ImagenUtils.generarImagenConIniciales("Luis", "Rodríguez", 200));
             Set<Hobby> hobbiesLuis = new HashSet<>();
             hobbiesLuis.add(hobbies.get(7)); // Viajes
             hobbiesLuis.add(hobbies.get(6)); // Fotografía
@@ -294,7 +295,7 @@ public class InicializarBaseDatos {
             sofia.setGenero("Mujer");
             sofia.setEdad(19);
             sofia.setCarrera(carreras.get(0)); // Ing. Software
-            sofia.setFotoPerfil("user_uploads/fotos_perfil/default_mujer3.jpg");
+            sofia.setFotoPerfil(ImagenUtils.generarImagenConIniciales("Sofía", "Hernández", 200));
             Set<Hobby> hobbiesSofia = new HashSet<>();
             hobbiesSofia.add(hobbies.get(1)); // Programación
             hobbiesSofia.add(hobbies.get(9)); // Arte
@@ -317,7 +318,7 @@ public class InicializarBaseDatos {
             diego.setGenero("Hombre");
             diego.setEdad(24);
             diego.setCarrera(carreras.get(2)); // Ing. Electrónica
-            diego.setFotoPerfil("user_uploads/fotos_perfil/default_hombre3.jpg");
+            diego.setFotoPerfil(ImagenUtils.generarImagenConIniciales("Diego", "Sánchez", 200));
             Set<Hobby> hobbiesDiego = new HashSet<>();
             hobbiesDiego.add(hobbies.get(4)); // Música
             hobbiesDiego.add(hobbies.get(16)); // Tocar guitarra
@@ -340,7 +341,7 @@ public class InicializarBaseDatos {
             valeria.setGenero("Mujer");
             valeria.setEdad(22);
             valeria.setCarrera(carreras.get(5)); // Lic. Administración
-            valeria.setFotoPerfil("user_uploads/fotos_perfil/default_mujer4.jpg");
+            valeria.setFotoPerfil(ImagenUtils.generarImagenConIniciales("Valeria", "Torres", 200));
             Set<Hobby> hobbiesValeria = new HashSet<>();
             hobbiesValeria.add(hobbies.get(15)); // Bailar
             hobbiesValeria.add(hobbies.get(8)); // Cocina
@@ -363,7 +364,7 @@ public class InicializarBaseDatos {
             roberto.setGenero("Hombre");
             roberto.setEdad(25);
             roberto.setCarrera(carreras.get(4)); // Ing. Mecánica
-            roberto.setFotoPerfil("user_uploads/fotos_perfil/default_hombre4.jpg");
+            roberto.setFotoPerfil(ImagenUtils.generarImagenConIniciales("Roberto", "Gómez", 200));
             Set<Hobby> hobbiesRoberto = new HashSet<>();
             hobbiesRoberto.add(hobbies.get(3)); // Deportes
             hobbiesRoberto.add(hobbies.get(22)); // Correr
