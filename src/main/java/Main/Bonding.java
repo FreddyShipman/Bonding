@@ -60,13 +60,16 @@ public class Bonding{
             // --- 2. Crear 50 Estudiantes ---
             System.out.println("Creando 50 estudiantes...");
             List<Estudiante> estudiantes = new ArrayList<>();
+            String[] generos = {"Hombre", "Mujer", "No binario"};
             for (int i = 1; i <= 50; i++) {
                 Estudiante est = new Estudiante();
                 est.setNombreEstudiante("Estudiante " + i);
                 est.setApellidoPaterno("ApellidoP" + i);
                 est.setApellidoMaterno("ApellidoM" + i);
-                est.setCorreoInstitucional("estudiante" + i + "@itson.edu.mx");
+                est.setCorreoInstitucional("estudiante" + i + "@potros.itson.edu.mx");
                 est.setContrasena("pass" + i); // Use secure passwords in a real app!
+                est.setGenero(generos[random.nextInt(generos.length)]);
+                est.setEdad(18 + random.nextInt(12)); // Edades entre 18-29
                 // Assign a random career from the list
                 est.setCarrera(carreras.get(random.nextInt(carreras.size())));
                 try {

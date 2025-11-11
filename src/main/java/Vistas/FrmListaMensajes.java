@@ -96,8 +96,9 @@ public class FrmListaMensajes extends JFrame {
 
         // Listeners de Navegación
         btnInicio.addActionListener(e -> irAExplorar());
-        btnBuscar.addActionListener(e -> irAExplorar());
+        btnBuscar.addActionListener(e -> irAPreferencias());
         btnMiPerfil.addActionListener(e -> irAPerfil());
+        btnConfiguracion.addActionListener(e -> irAConfiguracion());
     }
 
     private JPanel crearPanelNavegacion() {
@@ -259,12 +260,33 @@ public class FrmListaMensajes extends JFrame {
 
     private void irAPerfil() {
         new FrmPerfil(
-            estudianteActual, estudianteService, carreraService, 
+            estudianteActual, estudianteService, carreraService,
             hobbyService, interesService, likeService,
             matchService, chatService, mensajeService,
             preferenciaService // AÑADIDO
         ).setVisible(true);
         this.dispose();
+    }
+
+    private void irAPreferencias() {
+        new FrmPreferencias(
+            estudianteActual,
+            estudianteService,
+            carreraService,
+            hobbyService,
+            interesService,
+            likeService,
+            matchService,
+            chatService,
+            mensajeService,
+            preferenciaService
+        ).setVisible(true);
+        this.dispose();
+    }
+
+    private void irAConfiguracion() {
+        JOptionPane.showMessageDialog(this, "Navegando a Configuración...");
+        // Aquí irá FrmConfiguracion cuando esté implementado
     }
     
     // =================================================================

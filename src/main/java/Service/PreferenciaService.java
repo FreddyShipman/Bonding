@@ -33,9 +33,7 @@ public class PreferenciaService implements IPreferenciaService {
             if (preferencia.getEdadMinima() == null || preferencia.getEdadMaxima() == null || preferencia.getEdadMinima() > preferencia.getEdadMaxima()) {
                 throw new Exception("El rango de edad no es valido.");
             }
-             if (preferencia.getCarreraPreferida() == null || preferencia.getCarreraPreferida().getIdCarrera() == null) {
-                throw new Exception("La carrera preferida es obligatoria.");
-            }
+            // La carrera preferida es opcional - si no se especifica, se muestran todas las carreras
 
             em = JpaUtil.getInstance().getEntityManager();
             em.getTransaction().begin();

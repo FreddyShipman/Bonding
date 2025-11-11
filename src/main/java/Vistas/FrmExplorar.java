@@ -102,8 +102,11 @@ public class FrmExplorar extends JFrame {
         add(crearPanelPrincipal(), BorderLayout.CENTER);
 
         // Listeners
-        btnMiPerfil.addActionListener(e -> irAPerfil());
+        btnInicio.addActionListener(e -> recargarCandidatos());
+        btnBuscar.addActionListener(e -> irAPreferencias());
         btnMensajes.addActionListener(e -> irAMensajes());
+        btnMiPerfil.addActionListener(e -> irAPerfil());
+        btnConfiguracion.addActionListener(e -> irAConfiguracion());
         btnDislike.addActionListener(e -> registrarInteraccion(false));
         btnLike.addActionListener(e -> registrarInteraccion(true));
     }
@@ -240,9 +243,28 @@ public class FrmExplorar extends JFrame {
     private void mostrarPanelFinal(String mensaje) {
         JPanel panelFinal = new JPanel(new GridBagLayout());
         panelFinal.setBackground(COLOR_PANEL_BLANCO);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
         JLabel lblMensaje = new JLabel(mensaje);
         lblMensaje.setFont(new Font("Arial", Font.BOLD, 18));
-        panelFinal.add(lblMensaje);
+        panelFinal.add(lblMensaje, gbc);
+
+        // Agregar botón de recargar
+        gbc.gridy = 1;
+        JButton btnRecargar = new JButton("Recargar");
+        btnRecargar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnRecargar.setBackground(COLOR_BOTON_AZUL);
+        btnRecargar.setForeground(Color.WHITE);
+        btnRecargar.setFocusPainted(false);
+        btnRecargar.setPreferredSize(new Dimension(150, 40));
+        btnRecargar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnRecargar.addActionListener(e -> recargarCandidatos());
+        panelFinal.add(btnRecargar, gbc);
+
         panelCentralContenido.add(panelFinal);
         btnLike.setEnabled(false);
         btnDislike.setEnabled(false);
@@ -295,16 +317,42 @@ public class FrmExplorar extends JFrame {
         this.dispose();
     }
     
-    // --- CAMBIO: 'irAMensajes' ahora pasa los 9 servicios (preparado) ---
+    // --- CAMBIO: 'irAMensajes' ahora pasa los 9 servicios ---
     private void irAMensajes() {
-        JOptionPane.showMessageDialog(this, "Navegando a Lista de Mensajes...");
-        // new FrmListaMensajes(
-        //     estudianteActual, estudianteService, carreraService, 
-        //     hobbyService, interesService, likeService, 
-        //     matchService, chatService, mensajeService,
-        //     preferenciaService
-        // ).setVisible(true);
-        // this.dispose();
+        new FrmListaMensajes(
+            estudianteActual, estudianteService, carreraService,
+            hobbyService, interesService, likeService,
+            matchService, chatService, mensajeService,
+            preferenciaService
+        ).setVisible(true);
+        this.dispose();
+    }
+
+    private void irAPreferencias() {
+        new FrmPreferencias(
+            estudianteActual,
+            estudianteService,
+            carreraService,
+            hobbyService,
+            interesService,
+            likeService,
+            matchService,
+            chatService,
+            mensajeService,
+            preferenciaService
+        ).setVisible(true);
+        this.dispose();
+    }
+
+    private void irAConfiguracion() {
+        JOptionPane.showMessageDialog(this, "Navegando a Configuración...");
+        // Aquí irá FrmConfiguracion cuando esté implementado
+    }
+
+    private void recargarCandidatos() {
+        btnLike.setEnabled(true);
+        btnDislike.setEnabled(true);
+        cargarCandidatos();
     }
 
     // =================================================================

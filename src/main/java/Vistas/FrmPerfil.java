@@ -113,8 +113,9 @@ public class FrmPerfil extends JFrame {
         
         // Listeners Barra Izquierda
         btnInicio.addActionListener(e -> irAExplorar());
-        btnBuscar.addActionListener(e -> irAExplorar());
+        btnBuscar.addActionListener(e -> irAPreferencias());
         btnMensajes.addActionListener(e -> irAMensajes());
+        btnConfiguracion.addActionListener(e -> irAConfiguracion());
     }
 
     private JPanel crearPanelNavegacion() {
@@ -354,9 +355,19 @@ public class FrmPerfil extends JFrame {
     }
 
     private void editarPerfil() {
-        JOptionPane.showMessageDialog(this, "Abriendo FrmEditarPerfil...");
-        // new FrmEditarPerfil(estudiante, ...los 9 servicios...).setVisible(true);
-        // this.dispose();
+        new FrmEditarPerfil(
+            this.estudiante,
+            estudianteService,
+            carreraService,
+            hobbyService,
+            interesService,
+            likeService,
+            matchService,
+            chatService,
+            mensajeService,
+            preferenciaService
+        ).setVisible(true);
+        this.dispose();
     }
     
     private void eliminarCuenta() {
@@ -401,29 +412,33 @@ public class FrmPerfil extends JFrame {
         this.dispose();
     }
 
-    // --- CAMBIO: Pasa los 9 servicios (preparado) ---
+    // --- CAMBIO: Pasa los 9 servicios ---
     private void irAMensajes() {
-        JOptionPane.showMessageDialog(this, "Navegando a Lista de Mensajes...");
-        // new FrmListaMensajes(
-        //     estudianteActual, estudianteService, carreraService, 
-        //     hobbyService, interesService, likeService, 
-        //     matchService, chatService, mensajeService,
-        //     preferenciaService
-        // ).setVisible(true);
-        // this.dispose();
+        new FrmListaMensajes(
+            this.estudiante, estudianteService, carreraService,
+            hobbyService, interesService, likeService,
+            matchService, chatService, mensajeService,
+            preferenciaService
+        ).setVisible(true);
+        this.dispose();
     }
     
     // --- CAMBIO: Pasa los 9 servicios ---
     private void irAPreferencias() {
         new FrmPreferencias(
-            this.estudiante, this.estudianteService, this.carreraService, 
+            this.estudiante, this.estudianteService, this.carreraService,
             this.hobbyService, this.interesService, this.likeService,
             this.matchService, this.chatService, this.mensajeService,
             this.preferenciaService // AÑADIDO
         ).setVisible(true);
         this.dispose();
     }
-    
+
+    private void irAConfiguracion() {
+        JOptionPane.showMessageDialog(this, "Navegando a Configuración...");
+        // Aquí irá FrmConfiguracion cuando esté implementado
+    }
+
     // --- CAMBIO: Pasa los 9 servicios ---
     private void cerrarSesion() {
         new FrmLogin(

@@ -76,6 +76,8 @@ public class FrmCompletarPerfil extends JFrame {
     private JTextField txtHobby, txtInteres;
     private JPanel panelHobbiesTags, panelInteresesTags, panelSubirFoto;
     private JLabel lblFotoPreview;
+    private JComboBox<String> cmbGenero;
+    private JSpinner spinnerEdad;
 
     // --- Colores ---
     private static final Color COLOR_FONDO_GRIS = new Color(240, 242, 245);
@@ -162,7 +164,31 @@ public class FrmCompletarPerfil extends JFrame {
         btnSubirFoto.setFocusPainted(false); btnSubirFoto.setBackground(new Color(235, 235, 235));
         btnSubirFoto.setBorder(new EmptyBorder(5, 15, 5, 15));
         panelFormulario.add(btnSubirFoto, gbc);
+
+        // --- Campos de Género y Edad ---
         gbc.gridy++; gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTH; gbc.insets = new Insets(25, 5, 5, 5);
+        JLabel lblGenero = new JLabel("Género");
+        lblGenero.setFont(new Font("Arial", Font.BOLD, 16));
+        panelFormulario.add(lblGenero, gbc);
+
+        gbc.gridy++; gbc.ipady = 10; gbc.insets = new Insets(5, 5, 5, 5);
+        String[] generos = {"Hombre", "Mujer", "No binario"};
+        cmbGenero = new JComboBox<>(generos);
+        cmbGenero.setFont(new Font("Arial", Font.PLAIN, 14));
+        panelFormulario.add(cmbGenero, gbc);
+
+        gbc.gridy++; gbc.ipady = 0; gbc.insets = new Insets(15, 5, 5, 5);
+        JLabel lblEdad = new JLabel("Edad");
+        lblEdad.setFont(new Font("Arial", Font.BOLD, 16));
+        panelFormulario.add(lblEdad, gbc);
+
+        gbc.gridy++; gbc.ipady = 10; gbc.insets = new Insets(5, 5, 5, 5);
+        spinnerEdad = new JSpinner(new SpinnerNumberModel(18, 18, 99, 1));
+        spinnerEdad.setFont(new Font("Arial", Font.PLAIN, 14));
+        panelFormulario.add(spinnerEdad, gbc);
+
+        gbc.gridy++; gbc.ipady = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.NORTH; gbc.insets = new Insets(25, 5, 5, 5);
         JLabel lblHobbies = new JLabel("Mis Pasatiempos");
         lblHobbies.setFont(new Font("Arial", Font.BOLD, 16));
@@ -317,9 +343,11 @@ public class FrmCompletarPerfil extends JFrame {
              JOptionPane.showMessageDialog(this, "Añade al menos un pasatiempo e interés.", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         try {
             this.estudiante.setFotoPerfil(this.rutaFotoPerfil);
+            this.estudiante.setGenero((String) cmbGenero.getSelectedItem());
+            this.estudiante.setEdad((Integer) spinnerEdad.getValue());
             this.estudiante.setHobbies(this.hobbiesSet);
             this.estudiante.setIntereses(this.interesesSet);
             // (Aquí también podrías setear una biografía si añades el campo)

@@ -34,6 +34,8 @@ public class Estudiante implements Serializable {
     private String correoInstitucional;
     private String contrasena;
     private String fotoPerfil;
+    private String genero;
+    private Integer edad;
 
     @ManyToOne
     @JoinColumn(name = "id_carrera")
@@ -81,7 +83,7 @@ public class Estudiante implements Serializable {
     public Estudiante() {
     }
 
-    public Estudiante(Long idEstudiante, String nombreEstudiante, String apellidoPaterno, String apellidoMaterno, String correoInstitucional, String contrasena, String fotoPerfil, Carrera carrera, Set<Hobby> hobbies, Set<Interaccion> interacciones, Set<Like> likesDados, Set<Like> likesRecibidos, Set<Match> matches, Set<Interes> intereses, Preferencia preferencia , Set<Mensaje> mensajesEnviados) {
+    public Estudiante(Long idEstudiante, String nombreEstudiante, String apellidoPaterno, String apellidoMaterno, String correoInstitucional, String contrasena, String fotoPerfil, String genero, Integer edad, Carrera carrera, Set<Hobby> hobbies, Set<Interaccion> interacciones, Set<Like> likesDados, Set<Like> likesRecibidos, Set<Match> matches, Set<Interes> intereses, Preferencia preferencia , Set<Mensaje> mensajesEnviados) {
         this.idEstudiante = idEstudiante;
         this.nombreEstudiante = nombreEstudiante;
         this.apellidoPaterno = apellidoPaterno;
@@ -89,6 +91,8 @@ public class Estudiante implements Serializable {
         this.correoInstitucional = correoInstitucional;
         this.contrasena = contrasena;
         this.fotoPerfil = fotoPerfil;
+        this.genero = genero;
+        this.edad = edad;
         this.carrera = carrera;
         this.hobbies = hobbies;
         this.interacciones = interacciones;
@@ -154,6 +158,22 @@ public class Estudiante implements Serializable {
 
     public void setFotoPerfil(String fotoPerfil) {
         this.fotoPerfil = fotoPerfil;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
+
+    public Integer getEdad() {
+        return edad;
+    }
+
+    public void setEdad(Integer edad) {
+        this.edad = edad;
     }
 
     public Carrera getCarrera() {

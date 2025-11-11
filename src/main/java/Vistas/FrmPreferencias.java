@@ -97,9 +97,10 @@ public class FrmPreferencias extends JFrame {
 
         // Listeners de Navegación
         btnInicio.addActionListener(e -> irAExplorar());
-        btnBuscar.addActionListener(e -> irAExplorar());
+        // btnBuscar ya está en la página de búsqueda/preferencias, no hace nada
         btnMensajes.addActionListener(e -> irAMensajes());
         btnMiPerfil.addActionListener(e -> irAPerfil());
+        btnConfiguracion.addActionListener(e -> irAConfiguracion());
     }
 
     private JPanel crearPanelNavegacion() {
@@ -384,5 +385,10 @@ public class FrmPreferencias extends JFrame {
         ).setVisible(true);
 
         this.dispose();
+    }
+
+    private void irAConfiguracion() {
+        JOptionPane.showMessageDialog(this, "Navegando a Configuración...");
+        // Aquí irá FrmConfiguracion cuando esté implementado
     }
 }

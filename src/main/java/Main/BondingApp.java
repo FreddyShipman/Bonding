@@ -22,7 +22,7 @@ import javax.swing.UIManager;
 public class BondingApp {
 
     public static void main(String[] args) {
-        
+
         // 1. Establecer el Look and Feel nativo del Sistema Operativo
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -31,7 +31,12 @@ public class BondingApp {
             e.printStackTrace();
         }
 
-        // 2. --- El Núcleo de la Inyección de Dependencias ---
+        // 2. Inicializar la base de datos con datos de prueba
+        System.out.println("Inicializando base de datos...");
+        InicializarBaseDatos.inicializar();
+        InicializarBaseDatos.crearEstudiantesPrueba();
+
+        // 3. --- El Núcleo de la Inyección de Dependencias ---
         // Creamos UNA SOLA VEZ todas las instancias de los servicios.
         IEstudianteService estudianteService = new EstudianteService();
         ICarreraService carreraService = new CarreraService();
@@ -42,12 +47,12 @@ public class BondingApp {
         IChatService chatService = new ChatService();
         IMensajeService mensajeService = new MensajeService();
         IPreferenciaService preferenciaService = new PreferenciaService();
-        
-        // 3. Iniciar la interfaz gráfica en el hilo de Swing (EDT)
+
+        // 4. Iniciar la interfaz gráfica en el hilo de Swing (EDT)
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                // 4. Iniciar FrmLogin, pasándole todos los servicios
+                // 5. Iniciar FrmLogin, pasándole todos los servicios
                 FrmLogin ventanaPrincipal = new FrmLogin(
                     estudianteService,
                     carreraService,

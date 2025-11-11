@@ -249,9 +249,16 @@ public class FrmRegistro extends JFrame {
     private void cargarCarrerasDesdeBD() {
         // (Sin cambios)
         try {
-            this.listaCompletaDeCarreras = carreraService.listarCarreras(100); 
+            System.out.println("Cargando carreras desde BD...");
+            this.listaCompletaDeCarreras = carreraService.listarCarreras(100);
+            System.out.println("Carreras cargadas: " + (listaCompletaDeCarreras != null ? listaCompletaDeCarreras.size() : 0));
+            if (listaCompletaDeCarreras == null || listaCompletaDeCarreras.isEmpty()) {
+                System.err.println("⚠️ WARNING: No se encontraron carreras en la BD");
+                JOptionPane.showMessageDialog(this, "No se encontraron carreras en la base de datos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("❌ ERROR al cargar carreras: " + e.getMessage());
             JOptionPane.showMessageDialog(this, "Error al cargar las carreras: " + e.getMessage(), "Error de Conexión", JOptionPane.ERROR_MESSAGE);
         }
     }

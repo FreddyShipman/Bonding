@@ -40,10 +40,27 @@ public class ChatDAO extends GenericDAO<Chat, Long> implements IChatDAO {
     @Override
     public List<Chat> obtenerChatsPorEstudiante(EntityManager em, Long idEstudiante, int limit) throws Exception {
         try {
+            // Primero obtener los IDs de los chats
+            TypedQuery<Long> queryIds = em.createQuery(
+                "SELECT c.idChat FROM Chat c " +
+                "JOIN c.match m " +
+                "JOIN m.estudiantes e " +
+                "WHERE e.idEstudiante = :idEst", Long.class);
+            queryIds.setParameter("idEst", idEstudiante);
+            queryIds.setMaxResults(Math.min(limit, 100));
+            List<Long> chatIds = queryIds.getResultList();
+
+            if (chatIds.isEmpty()) {
+                return List.of(); // Retornar lista vacía
+            }
+
+            // Luego cargar los chats con JOIN FETCH
             TypedQuery<Chat> query = em.createQuery(
-                "SELECT c FROM Chat c JOIN c.match m JOIN m.estudiantes e WHERE e.idEstudiante = :idEst", Chat.class);
-            query.setParameter("idEst", idEstudiante);
-            query.setMaxResults(Math.min(limit, 100));
+                "SELECT DISTINCT c FROM Chat c " +
+                "LEFT JOIN FETCH c.match m " +
+                "LEFT JOIN FETCH m.estudiantes " +
+                "WHERE c.idChat IN :chatIds", Chat.class);
+            query.setParameter("chatIds", chatIds);
             return query.getResultList();
         } catch (Exception e) {
             throw new Exception("Error al obtener chats por estudiante: " + e.getMessage(), e);

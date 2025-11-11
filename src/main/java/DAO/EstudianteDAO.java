@@ -26,6 +26,25 @@ public class EstudianteDAO extends GenericDAO<Estudiante, Long> implements IEstu
     }
 
     @Override
+    public Estudiante buscarPorId(EntityManager em, Long id) throws Exception {
+        try {
+            // Usar JOIN FETCH para cargar eagerly las colecciones
+            TypedQuery<Estudiante> query = em.createQuery(
+                "SELECT DISTINCT e FROM Estudiante e " +
+                "LEFT JOIN FETCH e.hobbies " +
+                "LEFT JOIN FETCH e.intereses " +
+                "LEFT JOIN FETCH e.carrera " +
+                "WHERE e.idEstudiante = :id", Estudiante.class);
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } catch (Exception e) {
+            throw new Exception("Error al buscar por ID: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
     public Estudiante buscarPorCorreo(EntityManager em, String correoInstitucional) throws Exception {
         try {
             TypedQuery<Estudiante> query = em.createQuery(
@@ -42,8 +61,13 @@ public class EstudianteDAO extends GenericDAO<Estudiante, Long> implements IEstu
     @Override
     public Estudiante autenticar(EntityManager em, String correoInstitucional, String contrasena) throws Exception {
         try {
+            // Usar JOIN FETCH para cargar eagerly las colecciones
             TypedQuery<Estudiante> query = em.createQuery(
-                "SELECT e FROM Estudiante e WHERE e.correoInstitucional = :correo AND e.contrasena = :pass", Estudiante.class);
+                "SELECT DISTINCT e FROM Estudiante e " +
+                "LEFT JOIN FETCH e.hobbies " +
+                "LEFT JOIN FETCH e.intereses " +
+                "LEFT JOIN FETCH e.carrera " +
+                "WHERE e.correoInstitucional = :correo AND e.contrasena = :pass", Estudiante.class);
             query.setParameter("correo", correoInstitucional);
             query.setParameter("pass", contrasena);
             return query.getSingleResult();
@@ -83,8 +107,14 @@ public class EstudianteDAO extends GenericDAO<Estudiante, Long> implements IEstu
     @Override
     public List<Estudiante> obtenerMatches(EntityManager em, Long idEstudiante, int limit) throws Exception {
         try {
+            // Usar JOIN FETCH para cargar eagerly las colecciones
             TypedQuery<Estudiante> query = em.createQuery(
-                "SELECT est FROM Match m JOIN m.estudiantes est WHERE m IN (SELECT m2 FROM Estudiante e JOIN e.matches m2 WHERE e.idEstudiante = :idEst) AND est.idEstudiante != :idEst", Estudiante.class);
+                "SELECT DISTINCT est FROM Match m JOIN m.estudiantes est " +
+                "LEFT JOIN FETCH est.hobbies " +
+                "LEFT JOIN FETCH est.intereses " +
+                "LEFT JOIN FETCH est.carrera " +
+                "WHERE m IN (SELECT m2 FROM Estudiante e JOIN e.matches m2 WHERE e.idEstudiante = :idEst) " +
+                "AND est.idEstudiante != :idEst", Estudiante.class);
             query.setParameter("idEst", idEstudiante);
             query.setMaxResults(Math.min(limit, 100));
             return query.getResultList();
@@ -158,28 +188,66 @@ public class EstudianteDAO extends GenericDAO<Estudiante, Long> implements IEstu
     @Override
     public List<Estudiante> buscarEstudiantesCompatibles(EntityManager em, Long idEstudiante, int limit) throws Exception {
         try {
-            Preferencia prefs;
+            // Intentar obtener preferencias del estudiante
+            Preferencia prefs = null;
             try {
                 prefs = em.createQuery("SELECT p FROM Preferencia p WHERE p.estudiante.idEstudiante = :idEst", Preferencia.class)
                           .setParameter("idEst", idEstudiante)
                           .getSingleResult();
             } catch (NoResultException e) {
-                return java.util.Collections.emptyList();
+                // No hay preferencias, continuar sin filtrar por ellas
             }
 
-            TypedQuery<Estudiante> query = em.createQuery(
-                "SELECT e FROM Estudiante e " +
-                "WHERE e.idEstudiante != :idEst " + 
-                "AND e.carrera.idCarrera = :idCarreraPref " + 
-                "AND e.idEstudiante NOT IN (SELECT l.estudianteReceptor.idEstudiante FROM Like l WHERE l.estudianteEmisor.idEstudiante = :idEst)",
-                Estudiante.class);
+            // Construir query dinámicamente según las preferencias disponibles
+            // Usar LEFT JOIN FETCH para cargar eagerly las colecciones y evitar LazyInitializationException
+            StringBuilder queryStr = new StringBuilder(
+                "SELECT DISTINCT e FROM Estudiante e " +
+                "LEFT JOIN FETCH e.hobbies " +
+                "LEFT JOIN FETCH e.intereses " +
+                "LEFT JOIN FETCH e.carrera " +
+                "WHERE e.idEstudiante != :idEst " +
+                "AND e.idEstudiante NOT IN (SELECT l.estudianteReceptor.idEstudiante FROM Like l WHERE l.estudianteEmisor.idEstudiante = :idEst)");
 
+            // Filtrar por género si existe preferencia
+            if (prefs != null && prefs.getGeneroPreferido() != null && !prefs.getGeneroPreferido().trim().isEmpty()) {
+                queryStr.append(" AND e.genero = :genero");
+            }
+
+            // Filtrar por carrera si existe preferencia y no es nula
+            if (prefs != null && prefs.getCarreraPreferida() != null) {
+                queryStr.append(" AND e.carrera.idCarrera = :idCarreraPref");
+            }
+
+            // Filtrar por edad si existe preferencia de rango
+            if (prefs != null && prefs.getEdadMinima() != null) {
+                queryStr.append(" AND e.edad >= :edadMin");
+            }
+            if (prefs != null && prefs.getEdadMaxima() != null) {
+                queryStr.append(" AND e.edad <= :edadMax");
+            }
+
+            TypedQuery<Estudiante> query = em.createQuery(queryStr.toString(), Estudiante.class);
             query.setParameter("idEst", idEstudiante);
-            query.setParameter("idCarreraPref", prefs.getCarreraPreferida().getIdCarrera());
-            
+
+            // Establecer parámetros según las preferencias
+            if (prefs != null) {
+                if (prefs.getGeneroPreferido() != null && !prefs.getGeneroPreferido().trim().isEmpty()) {
+                    query.setParameter("genero", prefs.getGeneroPreferido());
+                }
+                if (prefs.getCarreraPreferida() != null) {
+                    query.setParameter("idCarreraPref", prefs.getCarreraPreferida().getIdCarrera());
+                }
+                if (prefs.getEdadMinima() != null) {
+                    query.setParameter("edadMin", prefs.getEdadMinima());
+                }
+                if (prefs.getEdadMaxima() != null) {
+                    query.setParameter("edadMax", prefs.getEdadMaxima());
+                }
+            }
+
             query.setMaxResults(Math.min(limit, 100));
             return query.getResultList();
-            
+
         } catch (Exception e) {
             throw new Exception("Error al buscar estudiantes compatibles: " + e.getMessage(), e);
         }

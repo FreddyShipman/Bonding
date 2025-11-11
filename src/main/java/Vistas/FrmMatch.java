@@ -278,14 +278,13 @@ public class FrmMatch extends JFrame {
     }
     
     private void irAMensajes() {
-        // new FrmListaMensajes(
-        //     estudianteActual, estudianteService, carreraService, 
-        //     hobbyService, interesService, likeService, 
-        //     matchService, chatService, mensajeService,
-        //     preferenciaService // AÑADIDO
-        // ).setVisible(true);
-        // this.dispose();
-        JOptionPane.showMessageDialog(this, "Navegando a Lista de Mensajes...");
+        new FrmListaMensajes(
+            estudianteActual, estudianteService, carreraService,
+            hobbyService, interesService, likeService,
+            matchService, chatService, mensajeService,
+            preferenciaService
+        ).setVisible(true);
+        this.dispose();
     }
 
     // =================================================================
