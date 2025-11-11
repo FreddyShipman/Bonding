@@ -69,7 +69,7 @@ public class FrmCompletarPerfil extends JFrame {
     private Estudiante estudiante;
     private Set<Hobby> hobbiesSet;
     private Set<Interes> interesesSet;
-    private String rutaFotoPerfil;
+    private byte[] rutaFotoPerfil;
 
     // --- Componentes UI ---
     private JButton btnSubirFoto, btnFinalizar;
@@ -247,7 +247,6 @@ public class FrmCompletarPerfil extends JFrame {
     }
 
     private void subirFoto() {
-        // (Sin cambios - lógica de copia de archivo)
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Selecciona una Foto de Perfil");
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (JPG, PNG)", "jpg", "png", "jpeg"));
@@ -255,19 +254,10 @@ public class FrmCompletarPerfil extends JFrame {
         if (result == JFileChooser.APPROVE_OPTION) {
             File archivoSeleccionado = fileChooser.getSelectedFile();
             try {
-                String uploadDir = "user_uploads/fotos_perfil/";
-                new File(uploadDir).mkdirs(); 
-                String extension = "";
-                String nombreArchivo = archivoSeleccionado.getName();
-                int i = nombreArchivo.lastIndexOf('.');
-                if (i > 0) {
-                    extension = nombreArchivo.substring(i + 1);
-                }
-                String uniqueFileName = UUID.randomUUID().toString() + "." + extension;
-                Path sourcePath = archivoSeleccionado.toPath();
-                Path destPath = Paths.get(uploadDir + uniqueFileName);
-                Files.copy(sourcePath, destPath, StandardCopyOption.REPLACE_EXISTING);
-                this.rutaFotoPerfil = destPath.toString(); 
+                // Leer el archivo como byte[]
+                this.rutaFotoPerfil = Files.readAllBytes(archivoSeleccionado.toPath());
+
+                // Mostrar preview
                 ImageIcon iconoOriginal = new ImageIcon(this.rutaFotoPerfil);
                 Image imagen = iconoOriginal.getImage();
                 Image imagenRedimensionada = imagen.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
@@ -276,7 +266,7 @@ public class FrmCompletarPerfil extends JFrame {
                 btnSubirFoto.setText("Cambiar Foto");
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error al guardar o cargar la imagen.", "Error de Archivo", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al cargar la imagen.", "Error de Archivo", JOptionPane.ERROR_MESSAGE);
                 this.rutaFotoPerfil = null;
             }
         }
@@ -335,7 +325,7 @@ public class FrmCompletarPerfil extends JFrame {
 
     // --- CAMBIO: Navega a FrmExplorar y pasa los 9 servicios ---
     private void guardarPerfil() {
-        if (this.rutaFotoPerfil == null || this.rutaFotoPerfil.isEmpty()) {
+        if (this.rutaFotoPerfil == null || this.rutaFotoPerfil.length == 0) {
             JOptionPane.showMessageDialog(this, "Por favor, sube una foto de perfil.", "Campo Requerido", JOptionPane.WARNING_MESSAGE);
             return;
         }

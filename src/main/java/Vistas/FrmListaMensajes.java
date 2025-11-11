@@ -381,10 +381,10 @@ public class FrmListaMensajes extends JFrame {
             });
         }
         
-        private void cargarFoto(JLabel label, String rutaFoto, int tamano) {
-            if (rutaFoto != null && !rutaFoto.isEmpty()) {
+        private void cargarFoto(JLabel label, byte[] fotoBytes, int tamano) {
+            if (fotoBytes != null && fotoBytes.length > 0) {
                 try {
-                    ImageIcon icono = new ImageIcon(rutaFoto);
+                    ImageIcon icono = new ImageIcon(fotoBytes);
                     Image img = icono.getImage().getScaledInstance(tamano, tamano, Image.SCALE_SMOOTH);
                     BufferedImage imgCircular = new BufferedImage(tamano, tamano, BufferedImage.TYPE_INT_ARGB);
                     Graphics2D g2 = imgCircular.createGraphics();

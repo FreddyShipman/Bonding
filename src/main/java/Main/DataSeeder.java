@@ -8,6 +8,7 @@ import java.util.List;
 import InterfaceService. *;
 import Domain. *;
 import Service. *;
+import Utils.ImagenUtils;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -135,7 +136,7 @@ public class DataSeeder {
             ana.setApellidoPaterno("García");
             ana.setCorreoInstitucional("ana.garcia@potros.itson.edu.mx");
             ana.setContrasena("1234"); // Contraseña simple para pruebas
-            ana.setFotoPerfil("user_uploads/fotos_perfil/ana.png"); // Requiere foto
+            ana.setFotoPerfil(ImagenUtils.generarImagenConIniciales("Ana", "Smith", 200));
             ana.setCarrera(cSoftware);
             ana.setHobbies(new HashSet<>(Set.of(hGaming, hSenderismo)));
             ana.setIntereses(new HashSet<>(Set.of(iProg, iMusicaIndie)));
@@ -146,7 +147,7 @@ public class DataSeeder {
             bruno.setApellidoPaterno("Martínez");
             bruno.setCorreoInstitucional("bruno.martinez@potros.itson.edu.mx");
             bruno.setContrasena("1234");
-            bruno.setFotoPerfil("user_uploads/fotos_perfil/bruno.png"); // Requiere foto
+            bruno.setFotoPerfil(ImagenUtils.generarImagenConIniciales("Bruno", "Johnson", 200));
             bruno.setCarrera(cPsicologia);
             bruno.setHobbies(new HashSet<>(Set.of(hMusica)));
             bruno.setIntereses(new HashSet<>(Set.of(iCine, iMusicaIndie)));
@@ -157,7 +158,7 @@ public class DataSeeder {
             carla.setApellidoPaterno("López");
             carla.setCorreoInstitucional("carla.lopez@potros.itson.edu.mx");
             carla.setContrasena("1234");
-            carla.setFotoPerfil("user_uploads/fotos_perfil/carla.png"); // Requiere foto
+            carla.setFotoPerfil(ImagenUtils.generarImagenConIniciales("Carla", "Williams", 200));
             carla.setCarrera(cDiseno);
             carla.setHobbies(new HashSet<>(Set.of(hFotografia)));
             carla.setIntereses(new HashSet<>(Set.of(iCine)));
@@ -168,7 +169,7 @@ public class DataSeeder {
             david.setApellidoPaterno("Sánchez");
             david.setCorreoInstitucional("david.sanchez@potros.itson.edu.mx");
             david.setContrasena("1234");
-            david.setFotoPerfil("user_uploads/fotos_perfil/david.png"); // Requiere foto
+            david.setFotoPerfil(ImagenUtils.generarImagenConIniciales("David", "Brown", 200));
             david.setCarrera(cSoftware);
             david.setHobbies(new HashSet<>(Set.of(hGaming)));
             david.setIntereses(new HashSet<>(Set.of(iProg, iIA)));
@@ -179,7 +180,7 @@ public class DataSeeder {
             elena.setApellidoPaterno("Ríos");
             elena.setCorreoInstitucional("elena.rios@potros.itson.edu.mx");
             elena.setContrasena("1234");
-            elena.setFotoPerfil("user_uploads/fotos_perfil/elena.png"); // Requiere foto
+            elena.setFotoPerfil(ImagenUtils.generarImagenConIniciales("Elena", "Davis", 200));
             elena.setCarrera(cPsicologia);
             elena.setHobbies(new HashSet<>(Set.of(hSenderismo, hFotografia)));
             elena.setIntereses(new HashSet<>(Set.of(iCine)));

@@ -33,7 +33,11 @@ public class Estudiante implements Serializable {
     private String apellidoMaterno;
     private String correoInstitucional;
     private String contrasena;
-    private String fotoPerfil;
+
+    @jakarta.persistence.Lob
+    @jakarta.persistence.Basic(fetch = jakarta.persistence.FetchType.LAZY)
+    private byte[] fotoPerfil;
+
     private String genero;
     private Integer edad;
 
@@ -83,7 +87,7 @@ public class Estudiante implements Serializable {
     public Estudiante() {
     }
 
-    public Estudiante(Long idEstudiante, String nombreEstudiante, String apellidoPaterno, String apellidoMaterno, String correoInstitucional, String contrasena, String fotoPerfil, String genero, Integer edad, Carrera carrera, Set<Hobby> hobbies, Set<Interaccion> interacciones, Set<Like> likesDados, Set<Like> likesRecibidos, Set<Match> matches, Set<Interes> intereses, Preferencia preferencia , Set<Mensaje> mensajesEnviados) {
+    public Estudiante(Long idEstudiante, String nombreEstudiante, String apellidoPaterno, String apellidoMaterno, String correoInstitucional, String contrasena, byte[] fotoPerfil, String genero, Integer edad, Carrera carrera, Set<Hobby> hobbies, Set<Interaccion> interacciones, Set<Like> likesDados, Set<Like> likesRecibidos, Set<Match> matches, Set<Interes> intereses, Preferencia preferencia , Set<Mensaje> mensajesEnviados) {
         this.idEstudiante = idEstudiante;
         this.nombreEstudiante = nombreEstudiante;
         this.apellidoPaterno = apellidoPaterno;
@@ -152,11 +156,11 @@ public class Estudiante implements Serializable {
         this.contrasena = contrasena;
     }
 
-    public String getFotoPerfil() {
+    public byte[] getFotoPerfil() {
         return fotoPerfil;
     }
 
-    public void setFotoPerfil(String fotoPerfil) {
+    public void setFotoPerfil(byte[] fotoPerfil) {
         this.fotoPerfil = fotoPerfil;
     }
 
