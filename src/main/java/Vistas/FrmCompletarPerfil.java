@@ -190,7 +190,7 @@ public class FrmCompletarPerfil extends JFrame {
 
         gbc.gridy++; gbc.ipady = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.NORTH; gbc.insets = new Insets(25, 5, 5, 5);
-        JLabel lblHobbies = new JLabel("Mis Pasatiempos");
+        JLabel lblHobbies = new JLabel("Mis Pasatiempos(presiona Enter para ingresar pasatiempo)");
         lblHobbies.setFont(new Font("Arial", Font.BOLD, 16));
         panelFormulario.add(lblHobbies, gbc);
         gbc.gridy++; gbc.ipady = 10; gbc.insets = new Insets(5, 5, 5, 5);
